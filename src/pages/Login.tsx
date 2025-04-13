@@ -4,12 +4,11 @@ import { Apple, ArrowRight, Check, Eye, EyeOff, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
-import { useToast } from "@/components/ui/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Login = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
-  const [loading, setLoading] = useState(false);
   const [formState, setFormState] = useState({
     name: "",
     email: "",
@@ -17,7 +16,7 @@ const Login = () => {
     confirmPassword: "",
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const { toast } = useToast();
+  const { login, register, isLoading } = useAuth();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -64,28 +63,10 @@ const Login = () => {
     
     if (!validate()) return;
     
-    setLoading(true);
-    
-    try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      toast({
-        title: isLogin ? "Welcome back!" : "Account created successfully!",
-        description: isLogin ? "You've successfully logged in." : "You can now login with your credentials.",
-        variant: "default",
-      });
-      
-      // Redirect to dashboard (would use router in a real app)
-      console.log("Form submitted:", formState);
-    } catch (error) {
-      toast({
-        title: "An error occurred",
-        description: "Please try again later.",
-        variant: "destructive",
-      });
-    } finally {
-      setLoading(false);
+    if (isLogin) {
+      await login(formState.email, formState.password);
+    } else {
+      await register(formState.name, formState.email, formState.password);
     }
   };
 
@@ -257,9 +238,9 @@ const Login = () => {
             <Button
               type="submit"
               className="w-full flex items-center justify-center gap-2 py-6"
-              disabled={loading}
+              disabled={isLoading}
             >
-              {loading ? (
+              {isLoading ? (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               ) : (
                 <>
