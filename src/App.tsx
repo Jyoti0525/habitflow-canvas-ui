@@ -13,6 +13,9 @@ import Settings from "./pages/Settings";
 import AddHabit from "./pages/AddHabit";
 import Suggestions from "./pages/Suggestions";
 import NotFound from "./pages/NotFound";
+import Login from "./pages/Login";
+import Profile from "./pages/Profile";
+import Analytics from "./pages/Analytics";
 
 const queryClient = new QueryClient();
 
@@ -29,6 +32,9 @@ const App = () => (
           <Route path="/settings" element={<Settings />} />
           <Route path="/add-habit" element={<AddHabit />} />
           <Route path="/suggestions" element={<Suggestions />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/analytics" element={<Analytics />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
