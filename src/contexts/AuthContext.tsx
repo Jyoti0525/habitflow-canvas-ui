@@ -16,6 +16,7 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<void>;
   register: (name: string, email: string, password: string) => Promise<void>;
   logout: () => void;
+  updateProfile: (userData: Partial<User>) => void;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -54,24 +55,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     checkAuth();
   }, []);
 
-  // Mock login function - would connect to an API in production
   const login = async (email: string, password: string) => {
     setIsLoading(true);
     
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Check if user exists in localStorage
+      const usersJson = localStorage.getItem("habitflow_users") || "[]";
+      const users = JSON.parse(usersJson);
       
-      // Mock validation - in a real app this would be server-side
-      if (email === "demo@example.com" && password === "password") {
-        const mockUser = {
-          id: "user-123",
-          name: "Demo User",
-          email: "demo@example.com"
-        };
+      const foundUser = users.find((u: any) => 
+        u.email === email && u.password === password
+      );
+      
+      if (foundUser) {
+        // Don't store password in the active user session
+        const { password, ...userWithoutPassword } = foundUser;
         
-        setUser(mockUser);
-        localStorage.setItem("habitflow_user", JSON.stringify(mockUser));
+        setUser(userWithoutPassword);
+        localStorage.setItem("habitflow_user", JSON.stringify(userWithoutPassword));
         
         toast.success("Welcome back!");
         navigate("/dashboard");
@@ -86,23 +87,38 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  // Mock register function
   const register = async (name: string, email: string, password: string) => {
     setIsLoading(true);
     
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      // Get existing users or initialize empty array
+      const usersJson = localStorage.getItem("habitflow_users") || "[]";
+      const users = JSON.parse(usersJson);
       
-      // In a real app, this would be a server-side registration
+      // Check if email already exists
+      if (users.some((user: any) => user.email === email)) {
+        toast.error("Email already registered");
+        setIsLoading(false);
+        return;
+      }
+      
+      // Create new user
       const newUser = {
         id: `user-${Date.now()}`,
         name,
-        email
+        email,
+        password, // In a real app, password would be hashed on the server
+        createdAt: new Date().toISOString(),
       };
       
-      setUser(newUser);
-      localStorage.setItem("habitflow_user", JSON.stringify(newUser));
+      // Add to users array
+      users.push(newUser);
+      localStorage.setItem("habitflow_users", JSON.stringify(users));
+      
+      // Login the user (without storing password in session)
+      const { password: _, ...userWithoutPassword } = newUser;
+      setUser(userWithoutPassword);
+      localStorage.setItem("habitflow_user", JSON.stringify(userWithoutPassword));
       
       toast.success("Account created successfully!");
       navigate("/dashboard");
@@ -121,8 +137,40 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     navigate("/login");
   };
 
+  const updateProfile = (userData: Partial<User>) => {
+    if (!user) return;
+    
+    try {
+      const updatedUser = { ...user, ...userData };
+      setUser(updatedUser);
+      localStorage.setItem("habitflow_user", JSON.stringify(updatedUser));
+      
+      // Also update in the users array
+      const usersJson = localStorage.getItem("habitflow_users") || "[]";
+      const users = JSON.parse(usersJson);
+      
+      const updatedUsers = users.map((u: any) => 
+        u.id === user.id ? { ...u, ...userData } : u
+      );
+      
+      localStorage.setItem("habitflow_users", JSON.stringify(updatedUsers));
+      toast.success("Profile updated successfully!");
+    } catch (error) {
+      toast.error("Failed to update profile");
+      console.error("Profile update error:", error);
+    }
+  };
+
   return (
-    <AuthContext.Provider value={{ user, isAuthenticated: !!user, isLoading, login, register, logout }}>
+    <AuthContext.Provider value={{ 
+      user, 
+      isAuthenticated: !!user, 
+      isLoading, 
+      login, 
+      register, 
+      logout,
+      updateProfile
+    }}>
       {children}
     </AuthContext.Provider>
   );

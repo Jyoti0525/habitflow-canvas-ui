@@ -1,16 +1,43 @@
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import ThemeToggle from "./ThemeToggle";
-import { Menu, X, User, BarChart2, LogOut } from "lucide-react";
+import { Menu, X, User, BarChart2, LogOut, ChevronDown } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { isAuthenticated, logout } = useAuth();
+  const { isAuthenticated, user, logout } = useAuth();
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
+  
+  const popoverRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (popoverRef.current && !popoverRef.current.contains(event.target as Node)) {
+        setIsProfileOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
+  };
+
+  const handleLogout = () => {
+    logout();
+    setIsProfileOpen(false);
+  };
+
+  const getInitial = () => {
+    return user?.name ? user.name.charAt(0).toUpperCase() : "U";
   };
 
   return (
@@ -39,18 +66,44 @@ const Header = () => {
           <div className="flex items-center space-x-4">
             <ThemeToggle />
             {isAuthenticated ? (
-              <>
-                <Link to="/profile" className="p-2 rounded-full hover:bg-muted transition-colors">
-                  <User size={20} />
-                </Link>
-                <button 
-                  onClick={logout} 
-                  className="flex items-center gap-1 py-2 px-4 rounded-full bg-destructive/10 text-destructive hover:bg-destructive/20 transition-colors"
-                >
-                  <LogOut size={16} />
-                  <span>Logout</span>
-                </button>
-              </>
+              <Popover open={isProfileOpen} onOpenChange={setIsProfileOpen}>
+                <PopoverTrigger asChild>
+                  <button 
+                    className="flex items-center gap-2 p-1 rounded-full hover:bg-muted transition-colors" 
+                    aria-label="User menu"
+                  >
+                    <Avatar className="h-8 w-8 bg-primary text-primary-foreground hover:cursor-pointer">
+                      <AvatarFallback>{getInitial()}</AvatarFallback>
+                    </Avatar>
+                    <ChevronDown size={16} className="text-muted-foreground" />
+                  </button>
+                </PopoverTrigger>
+                <PopoverContent className="w-56" ref={popoverRef}>
+                  <div className="space-y-2">
+                    <div className="border-b pb-2">
+                      <p className="font-medium">{user?.name}</p>
+                      <p className="text-sm text-muted-foreground">{user?.email}</p>
+                    </div>
+                    <div className="space-y-1">
+                      <Link 
+                        to="/profile" 
+                        className="flex items-center px-2 py-2 rounded-md hover:bg-muted w-full text-left"
+                        onClick={() => setIsProfileOpen(false)}
+                      >
+                        <User size={16} className="mr-2" />
+                        <span>My Profile</span>
+                      </Link>
+                      <button 
+                        onClick={handleLogout} 
+                        className="flex items-center px-2 py-2 rounded-md hover:bg-muted w-full text-left text-destructive"
+                      >
+                        <LogOut size={16} className="mr-2" />
+                        <span>Logout</span>
+                      </button>
+                    </div>
+                  </div>
+                </PopoverContent>
+              </Popover>
             ) : (
               <>
                 <Link to="/login" className="btn-secondary py-2 px-4">Login</Link>
@@ -62,6 +115,16 @@ const Header = () => {
         
         <div className="flex md:hidden items-center space-x-4">
           <ThemeToggle />
+          {isAuthenticated && (
+            <button 
+              onClick={() => setIsProfileOpen(!isProfileOpen)} 
+              className="p-1 rounded-full hover:bg-muted"
+            >
+              <Avatar className="h-8 w-8 bg-primary text-primary-foreground">
+                <AvatarFallback>{getInitial()}</AvatarFallback>
+              </Avatar>
+            </button>
+          )}
           <button onClick={toggleMenu} className="p-2">
             {isMenuOpen ? <X /> : <Menu />}
           </button>
@@ -113,6 +176,49 @@ const Header = () => {
               </div>
             )}
           </nav>
+          
+          {isProfileOpen && isAuthenticated && (
+            <div className="border-t p-4">
+              <div className="space-y-2">
+                <div className="border-b pb-2">
+                  <p className="font-medium">{user?.name}</p>
+                  <p className="text-sm text-muted-foreground">{user?.email}</p>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+      
+      {/* Mobile Profile Dropdown */}
+      {isProfileOpen && isAuthenticated && !isMenuOpen && (
+        <div className="md:hidden absolute top-16 right-0 w-64 bg-background border border-border rounded-md shadow-lg z-50 m-2 animate-fade-in">
+          <div className="p-4 space-y-2">
+            <div className="border-b pb-2">
+              <p className="font-medium">{user?.name}</p>
+              <p className="text-sm text-muted-foreground">{user?.email}</p>
+            </div>
+            <div className="space-y-1">
+              <Link 
+                to="/profile" 
+                className="flex items-center px-2 py-2 rounded-md hover:bg-muted w-full text-left"
+                onClick={() => setIsProfileOpen(false)}
+              >
+                <User size={16} className="mr-2" />
+                <span>My Profile</span>
+              </Link>
+              <button 
+                onClick={() => {
+                  logout();
+                  setIsProfileOpen(false);
+                }} 
+                className="flex items-center px-2 py-2 rounded-md hover:bg-muted w-full text-left text-destructive"
+              >
+                <LogOut size={16} className="mr-2" />
+                <span>Logout</span>
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </header>

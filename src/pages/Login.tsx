@@ -1,4 +1,5 @@
-import { useState } from "react";
+
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Apple, ArrowRight, Check, Eye, EyeOff, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -17,6 +18,19 @@ const Login = () => {
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const { login, register, isLoading } = useAuth();
+
+  // Check if we should show register form based on cookie
+  useEffect(() => {
+    const showRegister = document.cookie
+      .split('; ')
+      .find(row => row.startsWith('show_register='));
+    
+    if (showRegister) {
+      setIsLogin(false);
+      // Clear the cookie
+      document.cookie = "show_register=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    }
+  }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
