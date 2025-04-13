@@ -1,21 +1,42 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Sidebar from "../components/Sidebar";
 import HabitCard from "../components/HabitCard";
 import ProgressBar from "../components/ProgressBar";
-import { Search, Filter, Bell, User, Plus } from "lucide-react";
+import { Search, Filter, Bell, User, Plus, X } from "lucide-react";
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
 
-// Mock data for habits
-const initialHabits = [
-  { id: '1', name: 'Morning Meditation', category: 'Wellness', categoryColor: '#8B5CF6', streak: 7, completed: false },
-  { id: '2', name: '10,000 Steps', category: 'Fitness', categoryColor: '#EC4899', streak: 3, completed: false },
-  { id: '3', name: 'Read 30 minutes', category: 'Learning', categoryColor: '#3B82F6', streak: 12, completed: true },
-  { id: '4', name: 'Drink 2L of water', category: 'Health', categoryColor: '#10B981', streak: 5, completed: false },
-  { id: '5', name: 'Practice guitar', category: 'Hobby', categoryColor: '#F59E0B', streak: 0, completed: false },
-  { id: '6', name: 'Journal writing', category: 'Wellness', categoryColor: '#8B5CF6', streak: 21, completed: true },
-];
+// Define habit interface
+interface Habit {
+  id: string;
+  name: string;
+  category: string;
+  categoryColor: string;
+  streak: number;
+  completed: boolean;
+  createdAt: string;
+  userId: string;
+}
 
 // Mock categories
 const categories = [
@@ -28,37 +49,169 @@ const categories = [
 ];
 
 const Dashboard = () => {
-  const [habits, setHabits] = useState(initialHabits);
+  const { user, addNotification } = useAuth();
+  const [habits, setHabits] = useState<Habit[]>([]);
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
+  const [isAddHabitOpen, setIsAddHabitOpen] = useState(false);
+  const [newHabit, setNewHabit] = useState({
+    name: '',
+    category: 'Wellness',
+  });
+  
+  // Load habits from localStorage
+  useEffect(() => {
+    if (user) {
+      const savedHabits = localStorage.getItem(`habitflow_habits_${user.id}`);
+      if (savedHabits) {
+        try {
+          setHabits(JSON.parse(savedHabits));
+        } catch (error) {
+          console.error("Failed to parse saved habits:", error);
+        }
+      } else {
+        // Add sample habits for new users
+        const initialHabits = [
+          { id: '1', name: 'Morning Meditation', category: 'Wellness', categoryColor: '#8B5CF6', streak: 0, completed: false, createdAt: new Date().toISOString(), userId: user.id },
+          { id: '2', name: '10,000 Steps', category: 'Fitness', categoryColor: '#EC4899', streak: 0, completed: false, createdAt: new Date().toISOString(), userId: user.id },
+          { id: '3', name: 'Read 30 minutes', category: 'Learning', categoryColor: '#3B82F6', streak: 0, completed: false, createdAt: new Date().toISOString(), userId: user.id },
+        ];
+        setHabits(initialHabits);
+        localStorage.setItem(`habitflow_habits_${user.id}`, JSON.stringify(initialHabits));
+        
+        // Send welcome notification
+        addNotification({
+          message: "We've added some sample habits to get you started!",
+          type: "info"
+        });
+      }
+    }
+  }, [user, addNotification]);
+  
+  // Save habits to localStorage whenever they change
+  useEffect(() => {
+    if (user && habits.length > 0) {
+      localStorage.setItem(`habitflow_habits_${user.id}`, JSON.stringify(habits));
+    }
+  }, [habits, user]);
   
   const completedHabits = habits.filter(h => h.completed).length;
   const totalHabits = habits.length;
   
   const toggleComplete = (id: string) => {
-    setHabits(habits.map(habit => 
+    const habitToToggle = habits.find(h => h.id === id);
+    
+    if (!habitToToggle) return;
+    
+    const wasCompleted = habitToToggle.completed;
+    
+    const updatedHabits = habits.map(habit => 
       habit.id === id 
-        ? { ...habit, completed: !habit.completed } 
+        ? { 
+            ...habit, 
+            completed: !habit.completed,
+            // Increment streak only if marking complete and wasn't already completed
+            streak: !wasCompleted && !habit.completed 
+              ? habit.streak + 1 
+              : (wasCompleted && habit.completed ? Math.max(0, habit.streak - 1) : habit.streak)
+          } 
         : habit
-    ));
+    );
+    
+    setHabits(updatedHabits);
     
     const habitName = habits.find(h => h.id === id)?.name;
-    const isCompleted = !habits.find(h => h.id === id)?.completed;
+    const isCompleted = !wasCompleted;
     
     if (isCompleted) {
       toast.success(`"${habitName}" marked as complete!`);
+      
+      // Add streak milestone notifications
+      const newStreak = habitToToggle.streak + 1;
+      if (newStreak === 3) {
+        addNotification({
+          message: `3-day streak on "${habitName}"! Keep it up!`,
+          type: "success"
+        });
+      } else if (newStreak === 7) {
+        addNotification({
+          message: `Impressive! 7-day streak on "${habitName}"!`,
+          type: "success"
+        });
+      } else if (newStreak === 30) {
+        addNotification({
+          message: `Amazing! 30-day streak on "${habitName}"! You're building a real habit now!`,
+          type: "success"
+        });
+      } else if (newStreak % 10 === 0 && newStreak > 0) {
+        addNotification({
+          message: `${newStreak}-day streak on "${habitName}"! Fantastic progress!`,
+          type: "success"
+        });
+      }
     }
   };
   
-  const editHabit = (id: string) => {
-    // In a real app, this would open a modal or navigate to edit page
-    toast.info(`Editing habit: ${habits.find(h => h.id === id)?.name}`);
+  const editHabit = (id: string, updatedData: Partial<Habit>) => {
+    const updatedHabits = habits.map(habit => 
+      habit.id === id 
+        ? { 
+            ...habit, 
+            ...updatedData,
+            // Update category color if category changed
+            categoryColor: updatedData.category 
+              ? categories.find(c => c.name === updatedData.category)?.color || habit.categoryColor
+              : habit.categoryColor
+          } 
+        : habit
+    );
+    
+    setHabits(updatedHabits);
+    toast.success(`"${updatedData.name || habits.find(h => h.id === id)?.name}" updated`);
   };
   
   const deleteHabit = (id: string) => {
-    // In a real app, this would show a confirmation dialog
+    const habitName = habits.find(h => h.id === id)?.name;
     setHabits(habits.filter(habit => habit.id !== id));
-    toast.error(`"${habits.find(h => h.id === id)?.name}" deleted`);
+    toast.error(`"${habitName}" deleted`);
+    
+    // Add notification about deletion
+    addNotification({
+      message: `You've deleted "${habitName}" from your habits`,
+      type: "info"
+    });
+  };
+  
+  const addNewHabit = () => {
+    if (!newHabit.name.trim()) {
+      toast.error("Please enter a habit name");
+      return;
+    }
+    
+    const categoryColor = categories.find(c => c.name === newHabit.category)?.color || '#8B5CF6';
+    
+    const habit: Habit = {
+      id: `habit-${Date.now()}`,
+      name: newHabit.name,
+      category: newHabit.category,
+      categoryColor,
+      streak: 0,
+      completed: false,
+      createdAt: new Date().toISOString(),
+      userId: user?.id || 'unknown'
+    };
+    
+    setHabits([...habits, habit]);
+    
+    // Add notification
+    addNotification({
+      message: `New habit "${newHabit.name}" created. Start building consistency!`,
+      type: "success"
+    });
+    
+    toast.success(`"${newHabit.name}" created`);
+    setNewHabit({ name: '', category: 'Wellness' });
+    setIsAddHabitOpen(false);
   };
   
   // Filter habits based on category and search query
@@ -66,6 +219,16 @@ const Dashboard = () => {
     (selectedCategory === 'All' || habit.category === selectedCategory) &&
     habit.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
+  
+  // Calculate the longest streak
+  const longestStreak = habits.length > 0 
+    ? Math.max(...habits.map(h => h.streak))
+    : 0;
+  
+  // Calculate perfect days this week (simplified)
+  const perfectDays = habits.length > 0 
+    ? Math.min(7, Math.floor(Math.random() * 4) + 1) // Mock data - would be calculated from actual habit completion dates
+    : 0;
   
   return (
     <div className="min-h-screen bg-background">
@@ -109,7 +272,7 @@ const Dashboard = () => {
               <div className="card">
                 <div className="text-center">
                   <p className="text-3xl font-bold text-primary">
-                    {Math.max(...habits.map(h => h.streak))}
+                    {longestStreak}
                   </p>
                   <p className="text-sm text-muted-foreground">longest streak</p>
                 </div>
@@ -117,7 +280,7 @@ const Dashboard = () => {
               
               <div className="card">
                 <div className="text-center">
-                  <p className="text-3xl font-bold text-secondary">3</p>
+                  <p className="text-3xl font-bold text-secondary">{perfectDays}</p>
                   <p className="text-sm text-muted-foreground">perfect days this week</p>
                 </div>
               </div>
@@ -171,24 +334,90 @@ const Dashboard = () => {
                   key={habit.id} 
                   habit={habit} 
                   onToggleComplete={toggleComplete}
-                  onEdit={editHabit}
+                  onEdit={(id) => {
+                    const habit = habits.find(h => h.id === id);
+                    if (habit) {
+                      setNewHabit({ name: habit.name, category: habit.category });
+                      toast.info(`Editing habit: ${habit.name}`);
+                    }
+                  }}
                   onDelete={deleteHabit}
                 />
               ))}
               
-              <Link 
-                to="/add-habit" 
+              <button 
+                onClick={() => setIsAddHabitOpen(true)}
                 className="card flex items-center justify-center p-8 border-2 border-dashed border-muted-foreground/30 hover:border-muted-foreground/50 text-muted-foreground/80 hover:text-muted-foreground transition-colors"
               >
                 <div className="text-center">
                   <Plus className="h-10 w-10 mx-auto mb-2" />
                   <p>Add New Habit</p>
                 </div>
-              </Link>
+              </button>
             </div>
           </div>
         </main>
       </div>
+      
+      {/* Add Habit Dialog */}
+      <Dialog open={isAddHabitOpen} onOpenChange={setIsAddHabitOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Add New Habit</DialogTitle>
+            <DialogDescription>
+              Create a new habit to track. Make it specific and actionable.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="habit-name" className="text-right">
+                Name
+              </Label>
+              <Input
+                id="habit-name"
+                value={newHabit.name}
+                onChange={(e) => setNewHabit({ ...newHabit, name: e.target.value })}
+                placeholder="e.g. Morning Meditation"
+                className="col-span-3"
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="habit-category" className="text-right">
+                Category
+              </Label>
+              <Select
+                value={newHabit.category}
+                onValueChange={(value) => setNewHabit({ ...newHabit, category: value })}
+              >
+                <SelectTrigger className="col-span-3">
+                  <SelectValue placeholder="Select a category" />
+                </SelectTrigger>
+                <SelectContent>
+                  {categories.slice(1).map((category) => (
+                    <SelectItem key={category.name} value={category.name}>
+                      <div className="flex items-center">
+                        <span 
+                          className="w-2 h-2 rounded-full mr-2" 
+                          style={{ backgroundColor: category.color }}
+                        />
+                        {category.name}
+                      </div>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsAddHabitOpen(false)}>
+              Cancel
+            </Button>
+            <Button onClick={addNewHabit}>Save</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
