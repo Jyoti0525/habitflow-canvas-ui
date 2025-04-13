@@ -83,7 +83,7 @@ const Header = () => {
           <div className="h-8 w-8 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
             <span className="text-white font-bold text-lg">H</span>
           </div>
-          <span className="font-bold text-xl text-foreground">HabitFlow</span>
+          <span className="font-bold text-xl text-foreground">Habito</span>
         </Link>
         
         <div className="hidden md:flex items-center space-x-8">

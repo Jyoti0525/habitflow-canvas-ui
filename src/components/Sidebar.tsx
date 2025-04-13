@@ -28,7 +28,7 @@ const Sidebar = () => {
             <div className="h-8 w-8 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
               <span className="text-white font-bold text-lg">H</span>
             </div>
-            <span className="font-bold text-xl">HabitFlow</span>
+            <span className="font-bold text-xl">Habito</span>
           </Link>
         )}
         {collapsed && (
