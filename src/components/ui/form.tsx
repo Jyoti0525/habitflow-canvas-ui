@@ -51,9 +51,14 @@ const useFormField = () => {
     throw new Error("useFormField should be used within <FormField>")
   }
 
-  // Create a safe result object that always includes potential fields from fieldState
+  // Create a safe result object that always includes all potential fields from fieldState
   const fieldState = formContext && formContext.getFieldState ? 
-    formContext.getFieldState(fieldContext.name, formContext.formState) : {}
+    formContext.getFieldState(fieldContext.name, formContext.formState) : {
+      invalid: false,
+      isDirty: false,
+      isTouched: false,
+      error: undefined
+    }
 
   return {
     id,

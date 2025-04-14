@@ -1,10 +1,21 @@
-
 import { useState, useEffect } from "react";
 import Sidebar from "../components/Sidebar";
-import { Bell, Moon, Sun, Volume2, VolumeX, ChevronRight, Smartphone } from "lucide-react";
+import { 
+  Bell, Moon, Sun, Volume2, VolumeX, ChevronRight, Smartphone,
+  Headphones, MessageSquare 
+} from "lucide-react";
 import ThemeToggle from "../components/ThemeToggle";
 import { toast } from "sonner";
 import { Switch } from "@/components/ui/switch";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 
 const Settings = () => {
   const [remindersEnabled, setRemindersEnabled] = useState<boolean>(() => {
@@ -23,7 +34,14 @@ const Settings = () => {
     return localStorage.getItem("settings_sync") === "true" || true;
   });
   
-  // Save settings to localStorage whenever they change
+  const [isDeviceConfigOpen, setIsDeviceConfigOpen] = useState(false);
+  const [isContactSupportOpen, setIsContactSupportOpen] = useState(false);
+  const [deviceConfig, setDeviceConfig] = useState({
+    browser: true,
+    mobile: true,
+    desktop: true
+  });
+
   useEffect(() => {
     localStorage.setItem("settings_reminders", String(remindersEnabled));
     localStorage.setItem("settings_sound", String(soundEnabled));
@@ -32,8 +50,6 @@ const Settings = () => {
   }, [remindersEnabled, soundEnabled, emailNotifications, dataSyncing]);
   
   const saveSettings = () => {
-    // Settings are already saved in localStorage via useEffect,
-    // so this is just a confirmation for the user
     toast.success("Settings saved successfully!");
   };
   
@@ -56,22 +72,30 @@ const Settings = () => {
     setDataSyncing(prev => !prev);
     toast.success(`Data syncing ${!dataSyncing ? 'enabled' : 'disabled'}`);
   };
-  
+
+  const saveDeviceConfig = () => {
+    localStorage.setItem("device_notifications", JSON.stringify(deviceConfig));
+    setIsDeviceConfigOpen(false);
+    toast.success("Device notification settings saved!");
+  };
+
+  const handleContactSupport = () => {
+    setIsContactSupportOpen(false);
+    toast.success("Support request sent! We'll get back to you soon.");
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <Sidebar />
       
       <div className="ml-20 lg:ml-64">
-        {/* Top Bar */}
         <header className="h-16 border-b border-border flex items-center justify-between px-6">
           <h1 className="text-xl font-semibold">Settings</h1>
         </header>
         
         <main className="p-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {/* Settings Panel */}
             <div className="md:col-span-2 space-y-6">
-              {/* Notifications Section */}
               <div className="card">
                 <h2 className="text-lg font-semibold mb-4 flex items-center">
                   <Bell className="h-5 w-5 mr-2" />
@@ -119,7 +143,6 @@ const Settings = () => {
                 </div>
               </div>
               
-              {/* Appearance Section */}
               <div className="card">
                 <h2 className="text-lg font-semibold mb-4 flex items-center">
                   <Sun className="h-5 w-5 mr-2" />
@@ -171,7 +194,6 @@ const Settings = () => {
                 </div>
               </div>
               
-              {/* Account Section */}
               <div className="card">
                 <h2 className="text-lg font-semibold mb-4 flex items-center">
                   <Smartphone className="h-5 w-5 mr-2" />
@@ -208,7 +230,6 @@ const Settings = () => {
               </div>
             </div>
             
-            {/* Statistics Panel */}
             <div className="space-y-6">
               <div className="card">
                 <h2 className="text-lg font-semibold mb-4">Statistics Summary</h2>
@@ -252,6 +273,72 @@ const Settings = () => {
             </div>
           </div>
         </main>
+
+        <Dialog open={isDeviceConfigOpen} onOpenChange={setIsDeviceConfigOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Device Notifications</DialogTitle>
+              <DialogDescription>
+                Configure which devices should receive notifications
+              </DialogDescription>
+            </DialogHeader>
+            <div className="grid gap-4 py-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-2">
+                  <Headphones className="w-4 h-4" />
+                  <span>Browser Notifications</span>
+                </div>
+                <Switch
+                  checked={deviceConfig.browser}
+                  onCheckedChange={(checked) => 
+                    setDeviceConfig(prev => ({ ...prev, browser: checked }))
+                  }
+                />
+              </div>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-2">
+                  <Smartphone className="w-4 h-4" />
+                  <span>Mobile Notifications</span>
+                </div>
+                <Switch
+                  checked={deviceConfig.mobile}
+                  onCheckedChange={(checked) => 
+                    setDeviceConfig(prev => ({ ...prev, mobile: checked }))
+                  }
+                />
+              </div>
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setIsDeviceConfigOpen(false)}>
+                Cancel
+              </Button>
+              <Button onClick={saveDeviceConfig}>Save Changes</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        <Dialog open={isContactSupportOpen} onOpenChange={setIsContactSupportOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Contact Support</DialogTitle>
+              <DialogDescription>
+                Send us a message and we'll get back to you as soon as possible.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="grid gap-4 py-4">
+              <textarea
+                className="min-h-[100px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                placeholder="Describe your issue or question..."
+              />
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setIsContactSupportOpen(false)}>
+                Cancel
+              </Button>
+              <Button onClick={handleContactSupport}>Send Message</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );
