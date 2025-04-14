@@ -387,7 +387,6 @@ const Calendar = () => {
                                 </div>
                               </div>
                             ))}
-                          }
                         </div>
                       </div>
                     ))}
@@ -432,8 +431,7 @@ const Calendar = () => {
                             </div>
                           </div>
                         </div>
-                      ))
-                    }
+                      ))}
                   </div>
                 </TabsContent>
               </Tabs>
