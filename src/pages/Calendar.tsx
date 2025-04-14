@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import Sidebar from "../components/Sidebar";
 import { ChevronLeft, ChevronRight, Calendar as CalendarIcon, List, Grid } from "lucide-react";
@@ -219,246 +218,246 @@ const Calendar = () => {
                   <TabsTrigger value="weekly">Weekly</TabsTrigger>
                   <TabsTrigger value="monthly">Monthly</TabsTrigger>
                 </TabsList>
-              </Tabs>
-            </div>
-            
-            {/* Calendar Header */}
-            <div className="flex items-center justify-between mb-6">
-              <div className="flex items-center">
-                <button
-                  onClick={goToPreviousMonth}
-                  className="p-1 mr-4 rounded-full hover:bg-muted"
-                >
-                  <ChevronLeft className="h-5 w-5" />
-                </button>
-                <h2 className="text-xl font-semibold flex items-center">
-                  <CalendarIcon className="h-5 w-5 mr-2" />
-                  {viewMode === 'monthly' 
-                    ? `${monthNames[currentMonth]} ${currentYear}`
-                    : viewMode === 'weekly' 
-                      ? 'This Week'
-                      : 'Today\'s Habits'
-                  }
-                </h2>
-                <button
-                  onClick={goToNextMonth}
-                  className="p-1 ml-4 rounded-full hover:bg-muted"
-                >
-                  <ChevronRight className="h-5 w-5" />
-                </button>
-              </div>
-              
-              <div className="flex space-x-2">
-                {habitFilters.map((habit) => (
-                  <button
-                    key={habit.name}
-                    onClick={() => setSelectedHabit(habit.name)}
-                    className={`px-3 py-1 rounded-full text-sm ${
-                      selectedHabit === habit.name
-                        ? "bg-primary text-primary-foreground"
-                        : "bg-muted hover:bg-muted/80"
-                    }`}
-                  >
-                    <div className="flex items-center">
-                      <span
-                        className="w-2 h-2 rounded-full mr-2"
-                        style={{ backgroundColor: habit.color }}
-                      ></span>
-                      {habit.name}
-                    </div>
-                  </button>
-                ))}
-              </div>
-            </div>
-            
-            {/* Calendar Legend */}
-            <div className="flex justify-end space-x-4 mb-4">
-              <div className="flex items-center">
-                <div className="w-3 h-3 mr-2 rounded-full bg-green-500"></div>
-                <span className="text-sm">Completed</span>
-              </div>
-              <div className="flex items-center">
-                <div className="w-3 h-3 mr-2 rounded-full bg-red-500"></div>
-                <span className="text-sm">Missed</span>
-              </div>
-              <div className="flex items-center">
-                <div className="w-3 h-3 mr-2 rounded-full bg-gray-300 dark:bg-gray-600"></div>
-                <span className="text-sm">Pending</span>
-              </div>
-            </div>
-            
-            <TabsContent value="monthly" className="mt-2">
-              {/* Calendar Grid */}
-              <div className="grid grid-cols-7 gap-2">
-                {/* Week day headers */}
-                {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
-                  <div
-                    key={day}
-                    className="text-center font-medium text-sm py-2"
-                  >
-                    {day}
-                  </div>
-                ))}
                 
-                {/* Calendar days */}
-                {calendarData.map((day, index) => (
-                  <div
-                    key={index}
-                    className={`aspect-square border rounded-lg flex flex-col hover:shadow-md transition-shadow ${
-                      day.isToday
-                        ? "border-primary/50 bg-primary/5"
-                        : "border-border"
-                    } ${!day.day ? "bg-muted/30" : "cursor-pointer"}`}
-                  >
-                    {day.day && (
-                      <>
-                        <div className="p-2 text-right">
-                          <span
-                            className={`inline-block w-6 h-6 rounded-full text-sm ${
-                              day.isToday
-                                ? "bg-primary text-white"
-                                : ""
-                            } flex items-center justify-center`}
-                          >
-                            {day.day}
-                          </span>
-                        </div>
-                        <div className="flex-1 p-1">
-                          <TooltipProvider>
-                            <div className="flex flex-wrap gap-1">
-                              {day.habits
-                                .filter(
-                                  (habit) =>
-                                    selectedHabit === "All" ||
-                                    habit.name === selectedHabit
-                                )
-                                .map((habit, hIndex) => (
-                                  <Tooltip key={hIndex}>
-                                    <TooltipTrigger asChild>
-                                      <div
-                                        className={`w-3 h-3 rounded-full transition-transform hover:scale-125 ${
-                                          habit.status === 1
-                                            ? "animate-pulse"
-                                            : ""
-                                        }`}
-                                        style={{
-                                          backgroundColor:
-                                            habit.status === 1
-                                              ? "rgb(34, 197, 94)" // green for completed
-                                              : "rgb(239, 68, 68)", // red for missed
-                                        }}
-                                      ></div>
-                                    </TooltipTrigger>
-                                    <TooltipContent>
-                                      <p>{habit.name}: {
-                                        habit.status === 1 ? "Completed" : "Missed"
-                                      }</p>
-                                    </TooltipContent>
-                                  </Tooltip>
-                                ))}
-                            </div>
-                          </TooltipProvider>
-                        </div>
-                      </>
-                    )}
+                {/* Calendar Header */}
+                <div className="flex items-center justify-between mb-6 mt-6">
+                  <div className="flex items-center">
+                    <button
+                      onClick={goToPreviousMonth}
+                      className="p-1 mr-4 rounded-full hover:bg-muted"
+                    >
+                      <ChevronLeft className="h-5 w-5" />
+                    </button>
+                    <h2 className="text-xl font-semibold flex items-center">
+                      <CalendarIcon className="h-5 w-5 mr-2" />
+                      {viewMode === 'monthly' 
+                        ? `${monthNames[currentMonth]} ${currentYear}`
+                        : viewMode === 'weekly' 
+                          ? 'This Week'
+                          : 'Today\'s Habits'
+                      }
+                    </h2>
+                    <button
+                      onClick={goToNextMonth}
+                      className="p-1 ml-4 rounded-full hover:bg-muted"
+                    >
+                      <ChevronRight className="h-5 w-5" />
+                    </button>
                   </div>
-                ))}
-              </div>
-            </TabsContent>
-            
-            <TabsContent value="weekly" className="mt-2">
-              <div className="space-y-6">
-                {weeklyData.map((dayData, index) => (
-                  <div 
-                    key={index} 
-                    className={`p-4 rounded-lg border ${
-                      dayData.isToday ? "border-primary bg-primary/5" : "border-border"
-                    }`}
-                  >
-                    <h3 className="font-semibold mb-3 flex justify-between">
-                      <span>{dayData.day}</span>
-                      {dayData.isToday && (
-                        <span className="text-sm bg-primary text-white px-2 py-0.5 rounded-full">Today</span>
-                      )}
-                    </h3>
+                  
+                  <div className="flex space-x-2">
+                    {habitFilters.map((habit) => (
+                      <button
+                        key={habit.name}
+                        onClick={() => setSelectedHabit(habit.name)}
+                        className={`px-3 py-1 rounded-full text-sm ${
+                          selectedHabit === habit.name
+                            ? "bg-primary text-primary-foreground"
+                            : "bg-muted hover:bg-muted/80"
+                        }`}
+                      >
+                        <div className="flex items-center">
+                          <span
+                            className="w-2 h-2 rounded-full mr-2"
+                            style={{ backgroundColor: habit.color }}
+                          ></span>
+                          {habit.name}
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                
+                {/* Calendar Legend */}
+                <div className="flex justify-end space-x-4 mb-4">
+                  <div className="flex items-center">
+                    <div className="w-3 h-3 mr-2 rounded-full bg-green-500"></div>
+                    <span className="text-sm">Completed</span>
+                  </div>
+                  <div className="flex items-center">
+                    <div className="w-3 h-3 mr-2 rounded-full bg-red-500"></div>
+                    <span className="text-sm">Missed</span>
+                  </div>
+                  <div className="flex items-center">
+                    <div className="w-3 h-3 mr-2 rounded-full bg-gray-300 dark:bg-gray-600"></div>
+                    <span className="text-sm">Pending</span>
+                  </div>
+                </div>
+                
+                <TabsContent value="monthly" className="mt-2">
+                  {/* Calendar Grid */}
+                  <div className="grid grid-cols-7 gap-2">
+                    {/* Week day headers */}
+                    {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
+                      <div
+                        key={day}
+                        className="text-center font-medium text-sm py-2"
+                      >
+                        {day}
+                      </div>
+                    ))}
                     
-                    <div className="space-y-3">
-                      {dayData.completionData
-                        .filter(habit => selectedHabit === "All" || habit.name === selectedHabit)
-                        .map((habit, hIndex) => (
-                          <div key={hIndex} className="flex items-center justify-between">
+                    {/* Calendar days */}
+                    {calendarData.map((day, index) => (
+                      <div
+                        key={index}
+                        className={`aspect-square border rounded-lg flex flex-col hover:shadow-md transition-shadow ${
+                          day.isToday
+                            ? "border-primary/50 bg-primary/5"
+                            : "border-border"
+                        } ${!day.day ? "bg-muted/30" : "cursor-pointer"}`}
+                      >
+                        {day.day && (
+                          <>
+                            <div className="p-2 text-right">
+                              <span
+                                className={`inline-block w-6 h-6 rounded-full text-sm ${
+                                  day.isToday
+                                    ? "bg-primary text-white"
+                                    : ""
+                                } flex items-center justify-center`}
+                              >
+                                {day.day}
+                              </span>
+                            </div>
+                            <div className="flex-1 p-1">
+                              <TooltipProvider>
+                                <div className="flex flex-wrap gap-1">
+                                  {day.habits
+                                    .filter(
+                                      (habit) =>
+                                        selectedHabit === "All" ||
+                                        habit.name === selectedHabit
+                                    )
+                                    .map((habit, hIndex) => (
+                                      <Tooltip key={hIndex}>
+                                        <TooltipTrigger asChild>
+                                          <div
+                                            className={`w-3 h-3 rounded-full transition-transform hover:scale-125 ${
+                                              habit.status === 1
+                                                ? "animate-pulse"
+                                                : ""
+                                            }`}
+                                            style={{
+                                              backgroundColor:
+                                                habit.status === 1
+                                                  ? "rgb(34, 197, 94)" // green for completed
+                                                  : "rgb(239, 68, 68)", // red for missed
+                                            }}
+                                          ></div>
+                                        </TooltipTrigger>
+                                        <TooltipContent>
+                                          <p>{habit.name}: {
+                                            habit.status === 1 ? "Completed" : "Missed"
+                                          }</p>
+                                        </TooltipContent>
+                                      </Tooltip>
+                                    ))}
+                                </div>
+                              </TooltipProvider>
+                            </div>
+                          </>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </TabsContent>
+                
+                <TabsContent value="weekly" className="mt-2">
+                  <div className="space-y-6">
+                    {weeklyData.map((dayData, index) => (
+                      <div 
+                        key={index} 
+                        className={`p-4 rounded-lg border ${
+                          dayData.isToday ? "border-primary bg-primary/5" : "border-border"
+                        }`}
+                      >
+                        <h3 className="font-semibold mb-3 flex justify-between">
+                          <span>{dayData.day}</span>
+                          {dayData.isToday && (
+                            <span className="text-sm bg-primary text-white px-2 py-0.5 rounded-full">Today</span>
+                          )}
+                        </h3>
+                        
+                        <div className="space-y-3">
+                          {dayData.completionData
+                            .filter(habit => selectedHabit === "All" || habit.name === selectedHabit)
+                            .map((habit, hIndex) => (
+                              <div key={hIndex} className="flex items-center justify-between">
+                                <div className="flex items-center">
+                                  <span 
+                                    className="w-3 h-3 rounded-full mr-2" 
+                                    style={{ backgroundColor: habit.color }}
+                                  />
+                                  <span>{habit.name}</span>
+                                </div>
+                                
+                                <div className="flex items-center">
+                                  {habit.pending ? (
+                                    <span className="text-sm text-muted-foreground">Pending</span>
+                                  ) : (
+                                    <div className={`w-6 h-6 rounded-full flex items-center justify-center
+                                      ${habit.completed 
+                                        ? 'bg-green-100 text-green-600 dark:bg-green-900 dark:text-green-400' 
+                                        : 'bg-red-100 text-red-600 dark:bg-red-900 dark:text-red-400'
+                                      }`}>
+                                      {habit.completed ? '✓' : '✗'}
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                            ))
+                          }
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </TabsContent>
+                
+                <TabsContent value="daily" className="mt-2">
+                  <div className="space-y-6">
+                    {dailyData
+                      .filter(habit => selectedHabit === "All" || habit.name === selectedHabit)
+                      .map((habit, index) => (
+                        <div key={index} className="card space-y-3">
+                          <div className="flex items-center justify-between">
                             <div className="flex items-center">
                               <span 
-                                className="w-3 h-3 rounded-full mr-2" 
+                                className="w-4 h-4 rounded-full mr-2" 
                                 style={{ backgroundColor: habit.color }}
                               />
-                              <span>{habit.name}</span>
+                              <span className="font-medium">{habit.name}</span>
                             </div>
                             
-                            <div className="flex items-center">
-                              {habit.pending ? (
-                                <span className="text-sm text-muted-foreground">Pending</span>
-                              ) : (
-                                <div className={`w-6 h-6 rounded-full flex items-center justify-center
-                                  ${habit.completed 
-                                    ? 'bg-green-100 text-green-600 dark:bg-green-900 dark:text-green-400' 
-                                    : 'bg-red-100 text-red-600 dark:bg-red-900 dark:text-red-400'
-                                  }`}>
-                                  {habit.completed ? '✓' : '✗'}
-                                </div>
-                              )}
+                            <span className="text-sm bg-primary/10 text-primary px-2 py-0.5 rounded-full">
+                              {habit.streak} day streak
+                            </span>
+                          </div>
+                          
+                          <div className="space-y-1">
+                            <div className="flex justify-between text-sm">
+                              <span>Monthly Progress</span>
+                              <span>{habit.completedCount}/{habit.totalDays} days</span>
+                            </div>
+                            <Progress 
+                              value={habit.percentage} 
+                              className="h-2"
+                            />
+                          </div>
+                          
+                          <div className="pt-2 border-t">
+                            <div className="flex justify-between text-sm text-muted-foreground">
+                              <span>Last completed</span>
+                              <span>{new Date().toLocaleDateString()}</span>
                             </div>
                           </div>
-                        ))
-                      }
-                    </div>
+                        </div>
+                      ))
+                    }
                   </div>
-                ))}
-              </div>
-            </TabsContent>
-            
-            <TabsContent value="daily" className="mt-2">
-              <div className="space-y-6">
-                {dailyData
-                  .filter(habit => selectedHabit === "All" || habit.name === selectedHabit)
-                  .map((habit, index) => (
-                    <div key={index} className="card space-y-3">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center">
-                          <span 
-                            className="w-4 h-4 rounded-full mr-2" 
-                            style={{ backgroundColor: habit.color }}
-                          />
-                          <span className="font-medium">{habit.name}</span>
-                        </div>
-                        
-                        <span className="text-sm bg-primary/10 text-primary px-2 py-0.5 rounded-full">
-                          {habit.streak} day streak
-                        </span>
-                      </div>
-                      
-                      <div className="space-y-1">
-                        <div className="flex justify-between text-sm">
-                          <span>Monthly Progress</span>
-                          <span>{habit.completedCount}/{habit.totalDays} days</span>
-                        </div>
-                        <Progress 
-                          value={habit.percentage} 
-                          className="h-2"
-                        />
-                      </div>
-                      
-                      <div className="pt-2 border-t">
-                        <div className="flex justify-between text-sm text-muted-foreground">
-                          <span>Last completed</span>
-                          <span>{new Date().toLocaleDateString()}</span>
-                        </div>
-                      </div>
-                    </div>
-                  ))
-                }
-              </div>
-            </TabsContent>
+                </TabsContent>
+              </Tabs>
+            </div>
           </div>
         </main>
       </div>

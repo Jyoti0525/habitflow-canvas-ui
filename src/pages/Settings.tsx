@@ -7,19 +7,19 @@ import { toast } from "sonner";
 import { Switch } from "@/components/ui/switch";
 
 const Settings = () => {
-  const [remindersEnabled, setRemindersEnabled] = useState(() => {
+  const [remindersEnabled, setRemindersEnabled] = useState<boolean>(() => {
     return localStorage.getItem("settings_reminders") === "true";
   });
   
-  const [soundEnabled, setSoundEnabled] = useState(() => {
+  const [soundEnabled, setSoundEnabled] = useState<boolean>(() => {
     return localStorage.getItem("settings_sound") === "true" || true;
   });
   
-  const [emailNotifications, setEmailNotifications] = useState(() => {
+  const [emailNotifications, setEmailNotifications] = useState<boolean>(() => {
     return localStorage.getItem("settings_email") === "true";
   });
   
-  const [dataSyncing, setDataSyncing] = useState(() => {
+  const [dataSyncing, setDataSyncing] = useState<boolean>(() => {
     return localStorage.getItem("settings_sync") === "true" || true;
   });
   
@@ -38,22 +38,22 @@ const Settings = () => {
   };
   
   const toggleReminders = () => {
-    setRemindersEnabled(!remindersEnabled);
+    setRemindersEnabled(prev => !prev);
     toast.success(`Reminder notifications ${!remindersEnabled ? 'enabled' : 'disabled'}`);
   };
   
   const toggleSound = () => {
-    setSoundEnabled(!soundEnabled);
+    setSoundEnabled(prev => !prev);
     toast.success(`Sound notifications ${!soundEnabled ? 'enabled' : 'disabled'}`);
   };
   
   const toggleEmailNotifications = () => {
-    setEmailNotifications(!emailNotifications);
+    setEmailNotifications(prev => !prev);
     toast.success(`Email notifications ${!emailNotifications ? 'enabled' : 'disabled'}`);
   };
   
   const toggleDataSyncing = () => {
-    setDataSyncing(!dataSyncing);
+    setDataSyncing(prev => !prev);
     toast.success(`Data syncing ${!dataSyncing ? 'enabled' : 'disabled'}`);
   };
   
