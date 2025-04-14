@@ -15,7 +15,6 @@ import {
   TabsContent,
 } from "@/components/ui/tabs";
 
-// Mock data for calendar view
 const generateCalendarData = () => {
   const today = new Date();
   const month = today.getMonth();
@@ -26,34 +25,28 @@ const generateCalendarData = () => {
   
   const calendarDays = [];
   
-  // Add empty cells for days before the first day of the month
   for (let i = 0; i < firstDayOfMonth; i++) {
     calendarDays.push({ day: "", habits: [] });
   }
   
-  // Generate random habit completion data
   const habitCategories = [
-    { name: "Meditation", color: "#8B5CF6" }, // purple
-    { name: "Exercise", color: "#EC4899" },   // pink
-    { name: "Reading", color: "#3B82F6" },    // blue
-    { name: "Water", color: "#10B981" },      // green
-    { name: "Journal", color: "#F59E0B" }     // amber
+    { name: "Meditation", color: "#8B5CF6" },
+    { name: "Exercise", color: "#EC4899" },
+    { name: "Reading", color: "#3B82F6" },
+    { name: "Water", color: "#10B981" },
+    { name: "Journal", color: "#F59E0B" }
   ];
   
-  // Add cells for each day of the month with random habit data
   for (let day = 1; day <= daysInMonth; day++) {
     const date = new Date(year, month, day);
     const dayHabits = [];
     
-    // Generate random habit completion for the day
     for (const habit of habitCategories) {
-      // Random status: 0 = not relevant for this day, 1 = completed, 2 = missed
       const rand = Math.random();
       let status = 0;
-      if (rand < 0.7) { // 70% chance of the habit being relevant for this day
-        status = rand < 0.5 ? 1 : 2; // 50/50 chance of completion
+      if (rand < 0.7) {
+        status = rand < 0.5 ? 1 : 2;
         
-        // If it's today or a future day, set as pending (status 0)
         if (date >= new Date(today.setHours(0,0,0,0))) {
           status = 0;
         }
@@ -61,7 +54,7 @@ const generateCalendarData = () => {
         if (status > 0) {
           dayHabits.push({
             name: habit.name,
-            status: status, // 1 = completed, 2 = missed
+            status: status,
             color: habit.color,
           });
         }
@@ -83,7 +76,6 @@ const monthNames = [
   "July", "August", "September", "October", "November", "December"
 ];
 
-// Get the streak for a habit from localStorage
 const getHabitStreakFromStorage = (habitName) => {
   try {
     const userData = JSON.parse(localStorage.getItem('habitflow_habits_current'));
@@ -127,7 +119,6 @@ const Calendar = () => {
     }
   };
   
-  // Dummy habit categories for filtering
   const habitFilters = [
     { name: "All", color: "#6B7280" },
     { name: "Meditation", color: "#8B5CF6" },
@@ -137,7 +128,6 @@ const Calendar = () => {
     { name: "Journal", color: "#F59E0B" },
   ];
 
-  // Generate weekly data
   const generateWeeklyData = () => {
     const weekDays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
     const currentDay = today.getDay();
@@ -146,14 +136,12 @@ const Calendar = () => {
       const isToday = index === currentDay;
       const isPast = index < currentDay;
       
-      // Generate random completion data for each habit
       const completionData = habitFilters.slice(1).map(habit => {
-        // Past days have completion data, future days are pending
         if (isPast) {
           return {
             name: habit.name,
             color: habit.color,
-            completed: Math.random() > 0.3, // 70% chance of completion for past days
+            completed: Math.random() > 0.3,
             streak: getHabitStreakFromStorage(habit.name)
           };
         }
@@ -178,10 +166,9 @@ const Calendar = () => {
   
   const weeklyData = generateWeeklyData();
   
-  // Generate daily breakdown
   const generateDailyData = () => {
     return habitFilters.slice(1).map(habit => {
-      const completedCount = Math.floor(Math.random() * 10) + 5; // 5-15 completions
+      const completedCount = Math.floor(Math.random() * 10) + 5;
       const totalDays = 30;
       const percentage = (completedCount / totalDays) * 100;
       
@@ -203,14 +190,12 @@ const Calendar = () => {
       <Sidebar />
       
       <div className="ml-20 lg:ml-64">
-        {/* Top Bar */}
         <header className="h-16 border-b border-border flex items-center justify-between px-6">
           <h1 className="text-xl font-semibold">Calendar View</h1>
         </header>
         
         <main className="p-6">
           <div className="card mb-6">
-            {/* View Mode Tabs */}
             <div className="mb-6">
               <Tabs defaultValue="monthly" value={viewMode} onValueChange={setViewMode}>
                 <TabsList className="grid grid-cols-3">
@@ -219,7 +204,6 @@ const Calendar = () => {
                   <TabsTrigger value="monthly">Monthly</TabsTrigger>
                 </TabsList>
                 
-                {/* Calendar Header */}
                 <div className="flex items-center justify-between mb-6 mt-6">
                   <div className="flex items-center">
                     <button
@@ -268,7 +252,6 @@ const Calendar = () => {
                   </div>
                 </div>
                 
-                {/* Calendar Legend */}
                 <div className="flex justify-end space-x-4 mb-4">
                   <div className="flex items-center">
                     <div className="w-3 h-3 mr-2 rounded-full bg-green-500"></div>
@@ -285,9 +268,7 @@ const Calendar = () => {
                 </div>
                 
                 <TabsContent value="monthly" className="mt-2">
-                  {/* Calendar Grid */}
                   <div className="grid grid-cols-7 gap-2">
-                    {/* Week day headers */}
                     {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
                       <div
                         key={day}
@@ -297,7 +278,6 @@ const Calendar = () => {
                       </div>
                     ))}
                     
-                    {/* Calendar days */}
                     {calendarData.map((day, index) => (
                       <div
                         key={index}
@@ -341,8 +321,8 @@ const Calendar = () => {
                                             style={{
                                               backgroundColor:
                                                 habit.status === 1
-                                                  ? "rgb(34, 197, 94)" // green for completed
-                                                  : "rgb(239, 68, 68)", // red for missed
+                                                  ? "rgb(34, 197, 94)"
+                                                  : "rgb(239, 68, 68)"
                                             }}
                                           ></div>
                                         </TooltipTrigger>
@@ -406,7 +386,7 @@ const Calendar = () => {
                                   )}
                                 </div>
                               </div>
-                            ))
+                            ))}
                           }
                         </div>
                       </div>
