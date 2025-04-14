@@ -67,6 +67,36 @@
     --input: 217.2 32.6% 17.5%;
     --ring: 212.7 26.8% 83.9%;
   }
+  
+  /* Purple theme */
+  .theme-purple {
+    --primary: 262 83% 76%;
+    --secondary: 240 60% 60%;
+  }
+  
+  /* Green theme */
+  .theme-green {
+    --primary: 142 76% 36%;
+    --secondary: 160 84% 39%;
+  }
+  
+  /* Amber theme */
+  .theme-amber {
+    --primary: 38 92% 50%;
+    --secondary: 25 95% 53%;
+  }
+  
+  /* Pink theme */
+  .theme-pink {
+    --primary: 336 80% 58%;
+    --secondary: 324 77% 48%;
+  }
+  
+  /* Blue theme is the default */
+  .theme-blue {
+    --primary: 205 87% 61%;
+    --secondary: 160 84% 39%;
+  }
 }
 
 @layer base {
@@ -101,6 +131,7 @@
   }
 }
 
+/* Animation Utilities */
 @keyframes float {
   0% {
     transform: translateY(0px);
@@ -115,4 +146,62 @@
 
 .animate-float {
   animation: float 3s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Theme transition animations */
+*, *::before, *::after {
+  transition-property: background-color, border-color, color, fill, stroke;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 200ms;
+}
+
+/* Exempt from transitions for performance */
+.no-transition {
+  transition: none !important;
+}
+
+/* Card hover effects */
+.card {
+  transition: all 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+}
+
+/* Progress bar animations */
+.progress-bar-animated {
+  animation: progress 1s ease-in-out;
+}
+
+@keyframes progress {
+  0% {
+    width: 0%;
+  }
+}
+
+/* Checkmark animation */
+.checkmark {
+  stroke-dasharray: 100;
+  stroke-dashoffset: 100;
+  animation: checkmark 0.5s forwards;
+}
+
+@keyframes checkmark {
+  to {
+    stroke-dashoffset: 0;
+  }
 }

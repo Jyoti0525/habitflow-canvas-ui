@@ -1,16 +1,60 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Sidebar from "../components/Sidebar";
 import { Bell, Moon, Sun, Volume2, VolumeX, ChevronRight, Smartphone } from "lucide-react";
 import ThemeToggle from "../components/ThemeToggle";
 import { toast } from "sonner";
+import { Switch } from "@/components/ui/switch";
 
 const Settings = () => {
-  const [remindersEnabled, setRemindersEnabled] = useState(true);
-  const [soundEnabled, setSoundEnabled] = useState(true);
+  const [remindersEnabled, setRemindersEnabled] = useState(() => {
+    return localStorage.getItem("settings_reminders") === "true";
+  });
+  
+  const [soundEnabled, setSoundEnabled] = useState(() => {
+    return localStorage.getItem("settings_sound") === "true" || true;
+  });
+  
+  const [emailNotifications, setEmailNotifications] = useState(() => {
+    return localStorage.getItem("settings_email") === "true";
+  });
+  
+  const [dataSyncing, setDataSyncing] = useState(() => {
+    return localStorage.getItem("settings_sync") === "true" || true;
+  });
+  
+  // Save settings to localStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem("settings_reminders", String(remindersEnabled));
+    localStorage.setItem("settings_sound", String(soundEnabled));
+    localStorage.setItem("settings_email", String(emailNotifications));
+    localStorage.setItem("settings_sync", String(dataSyncing));
+  }, [remindersEnabled, soundEnabled, emailNotifications, dataSyncing]);
   
   const saveSettings = () => {
+    // Settings are already saved in localStorage via useEffect,
+    // so this is just a confirmation for the user
     toast.success("Settings saved successfully!");
+  };
+  
+  const toggleReminders = () => {
+    setRemindersEnabled(!remindersEnabled);
+    toast.success(`Reminder notifications ${!remindersEnabled ? 'enabled' : 'disabled'}`);
+  };
+  
+  const toggleSound = () => {
+    setSoundEnabled(!soundEnabled);
+    toast.success(`Sound notifications ${!soundEnabled ? 'enabled' : 'disabled'}`);
+  };
+  
+  const toggleEmailNotifications = () => {
+    setEmailNotifications(!emailNotifications);
+    toast.success(`Email notifications ${!emailNotifications ? 'enabled' : 'disabled'}`);
+  };
+  
+  const toggleDataSyncing = () => {
+    setDataSyncing(!dataSyncing);
+    toast.success(`Data syncing ${!dataSyncing ? 'enabled' : 'disabled'}`);
   };
   
   return (
@@ -42,15 +86,10 @@ const Settings = () => {
                         Receive notifications for your habits
                       </p>
                     </div>
-                    <label className="relative inline-flex items-center cursor-pointer">
-                      <input 
-                        type="checkbox" 
-                        className="sr-only peer" 
-                        checked={remindersEnabled}
-                        onChange={() => setRemindersEnabled(!remindersEnabled)}
-                      />
-                      <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-primary/25 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
-                    </label>
+                    <Switch 
+                      checked={remindersEnabled}
+                      onCheckedChange={toggleReminders}
+                    />
                   </div>
                   
                   <div className="flex items-center justify-between py-2 border-b border-border">
@@ -60,15 +99,10 @@ const Settings = () => {
                         Play sounds for notifications
                       </p>
                     </div>
-                    <label className="relative inline-flex items-center cursor-pointer">
-                      <input 
-                        type="checkbox" 
-                        className="sr-only peer" 
-                        checked={soundEnabled}
-                        onChange={() => setSoundEnabled(!soundEnabled)}
-                      />
-                      <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-primary/25 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
-                    </label>
+                    <Switch 
+                      checked={soundEnabled}
+                      onCheckedChange={toggleSound}
+                    />
                   </div>
                   
                   <div className="flex items-center justify-between py-2">
@@ -119,6 +153,17 @@ const Settings = () => {
                           style={{ backgroundColor: scheme.color }}
                           title={scheme.name}
                           aria-label={`Select ${scheme.name} theme`}
+                          onClick={() => {
+                            document.documentElement.style.setProperty(
+                              '--primary', 
+                              scheme.name.toLowerCase() === 'blue' ? "205 87% 61%" :
+                              scheme.name.toLowerCase() === 'purple' ? "262 83% 76%" :
+                              scheme.name.toLowerCase() === 'pink' ? "336 80% 58%" :
+                              scheme.name.toLowerCase() === 'green' ? "142 76% 36%" :
+                              "38 92% 50%" // amber
+                            );
+                            toast.success(`${scheme.name} theme applied`);
+                          }}
                         ></button>
                       ))}
                     </div>
@@ -141,9 +186,10 @@ const Settings = () => {
                         Receive weekly summary and tips
                       </p>
                     </div>
-                    <button className="text-primary flex items-center">
-                      Configure <ChevronRight className="h-4 w-4 ml-1" />
-                    </button>
+                    <Switch 
+                      checked={emailNotifications}
+                      onCheckedChange={toggleEmailNotifications}
+                    />
                   </div>
                   
                   <div className="flex items-center justify-between py-2">
@@ -153,9 +199,10 @@ const Settings = () => {
                         Control how your data syncs across devices
                       </p>
                     </div>
-                    <button className="text-primary flex items-center">
-                      Configure <ChevronRight className="h-4 w-4 ml-1" />
-                    </button>
+                    <Switch 
+                      checked={dataSyncing}
+                      onCheckedChange={toggleDataSyncing}
+                    />
                   </div>
                 </div>
               </div>

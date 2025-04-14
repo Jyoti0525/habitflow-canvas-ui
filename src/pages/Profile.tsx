@@ -13,6 +13,15 @@ import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogClose,
+} from "@/components/ui/dialog";
 import { 
   User, 
   Mail, 
@@ -20,7 +29,9 @@ import {
   LogOut, 
   Edit2, 
   Save,
-  Settings as SettingsIcon
+  Settings as SettingsIcon,
+  Check,
+  X
 } from "lucide-react";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
@@ -30,6 +41,18 @@ const Profile = () => {
   const navigate = useNavigate();
   const [isEditingName, setIsEditingName] = useState(false);
   const [nameValue, setNameValue] = useState(user?.name || "");
+  const [isPasswordDialogOpen, setIsPasswordDialogOpen] = useState(false);
+  const [passwordData, setPasswordData] = useState({
+    currentPassword: "",
+    newPassword: "",
+    confirmPassword: ""
+  });
+  const [passwordErrors, setPasswordErrors] = useState({
+    currentPassword: "",
+    newPassword: "",
+    confirmPassword: ""
+  });
+  const [passwordUpdateStatus, setPasswordUpdateStatus] = useState<"idle" | "success" | "error">("idle");
   
   const handleUpdateName = () => {
     if (nameValue.trim() === "") {
@@ -51,6 +74,64 @@ const Profile = () => {
 
   const getInitials = () => {
     return user?.name ? user.name.charAt(0).toUpperCase() : "U";
+  };
+
+  const validatePasswordForm = () => {
+    const errors = {
+      currentPassword: "",
+      newPassword: "",
+      confirmPassword: ""
+    };
+    let isValid = true;
+    
+    // Validate current password
+    if (!passwordData.currentPassword) {
+      errors.currentPassword = "Current password is required";
+      isValid = false;
+    }
+    
+    // Validate new password
+    if (!passwordData.newPassword) {
+      errors.newPassword = "New password is required";
+      isValid = false;
+    } else if (passwordData.newPassword.length < 8) {
+      errors.newPassword = "Password must be at least 8 characters";
+      isValid = false;
+    }
+    
+    // Validate confirm password
+    if (!passwordData.confirmPassword) {
+      errors.confirmPassword = "Please confirm your new password";
+      isValid = false;
+    } else if (passwordData.confirmPassword !== passwordData.newPassword) {
+      errors.confirmPassword = "Passwords do not match";
+      isValid = false;
+    }
+    
+    setPasswordErrors(errors);
+    return isValid;
+  };
+
+  const handleChangePassword = () => {
+    if (!validatePasswordForm()) {
+      return;
+    }
+    
+    // Simulate password update
+    setPasswordUpdateStatus("success");
+    
+    // In a real app, you would call an API here
+    // For the demo, we'll just show a success message
+    setTimeout(() => {
+      toast.success("Password changed successfully");
+      setIsPasswordDialogOpen(false);
+      setPasswordData({
+        currentPassword: "",
+        newPassword: "",
+        confirmPassword: ""
+      });
+      setPasswordUpdateStatus("idle");
+    }, 1500);
   };
 
   return (
@@ -164,7 +245,13 @@ const Profile = () => {
                         <span className="font-medium">Password</span>
                       </div>
                       <p>••••••••</p>
-                      <Button variant="outline" size="sm">Change Password</Button>
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => setIsPasswordDialogOpen(true)}
+                      >
+                        Change Password
+                      </Button>
                     </div>
                     
                     <div className="border-t pt-4 mt-4">
@@ -231,6 +318,90 @@ const Profile = () => {
           </div>
         </div>
       </div>
+      
+      {/* Password Change Dialog */}
+      <Dialog open={isPasswordDialogOpen} onOpenChange={setIsPasswordDialogOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Change Your Password</DialogTitle>
+            <DialogDescription>
+              Please enter your current password and choose a new secure password.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="grid gap-4 py-4">
+            <div className="grid gap-2">
+              <FormLabel htmlFor="currentPassword">Current Password</FormLabel>
+              <Input
+                id="currentPassword"
+                type="password"
+                value={passwordData.currentPassword}
+                onChange={(e) => setPasswordData({...passwordData, currentPassword: e.target.value})}
+                className={passwordErrors.currentPassword ? "border-destructive" : ""}
+              />
+              {passwordErrors.currentPassword && (
+                <p className="text-sm text-destructive">{passwordErrors.currentPassword}</p>
+              )}
+            </div>
+            
+            <div className="grid gap-2">
+              <FormLabel htmlFor="newPassword">New Password</FormLabel>
+              <Input
+                id="newPassword"
+                type="password"
+                value={passwordData.newPassword}
+                onChange={(e) => setPasswordData({...passwordData, newPassword: e.target.value})}
+                className={passwordErrors.newPassword ? "border-destructive" : ""}
+              />
+              {passwordErrors.newPassword ? (
+                <p className="text-sm text-destructive">{passwordErrors.newPassword}</p>
+              ) : (
+                <FormDescription>Must be at least 8 characters</FormDescription>
+              )}
+            </div>
+            
+            <div className="grid gap-2">
+              <FormLabel htmlFor="confirmPassword">Confirm New Password</FormLabel>
+              <Input
+                id="confirmPassword"
+                type="password"
+                value={passwordData.confirmPassword}
+                onChange={(e) => setPasswordData({...passwordData, confirmPassword: e.target.value})}
+                className={passwordErrors.confirmPassword ? "border-destructive" : ""}
+              />
+              {passwordErrors.confirmPassword && (
+                <p className="text-sm text-destructive">{passwordErrors.confirmPassword}</p>
+              )}
+            </div>
+            
+            {passwordUpdateStatus === "success" && (
+              <div className="flex items-center text-sm text-green-600 gap-1">
+                <Check className="h-4 w-4" />
+                Password updated successfully
+              </div>
+            )}
+            
+            {passwordUpdateStatus === "error" && (
+              <div className="flex items-center text-sm text-destructive gap-1">
+                <X className="h-4 w-4" />
+                Failed to update password
+              </div>
+            )}
+          </div>
+          
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button variant="outline">Cancel</Button>
+            </DialogClose>
+            <Button 
+              onClick={handleChangePassword}
+              disabled={passwordUpdateStatus === "success"}
+            >
+              Update Password
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

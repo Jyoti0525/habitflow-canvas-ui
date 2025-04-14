@@ -1,6 +1,12 @@
 
 import { useState } from "react";
-import { CheckCircle, MoreVertical, Edit, Trash } from "lucide-react";
+import { CheckCircle, MoreVertical, Edit, Trash, Info } from "lucide-react";
+import { 
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface Habit {
   id: string;
@@ -33,7 +39,7 @@ const HabitCard = ({ habit, onToggleComplete, onEdit, onDelete }: HabitCardProps
   const toggleMenu = () => setShowMenu(!showMenu);
   
   return (
-    <div className="card flex items-center justify-between group hover:shadow-md">
+    <div className="card flex items-center justify-between group hover:shadow-md transition-all duration-300">
       <div className="flex items-center">
         <button 
           onClick={() => onToggleComplete(habit.id)} 
@@ -43,7 +49,7 @@ const HabitCard = ({ habit, onToggleComplete, onEdit, onDelete }: HabitCardProps
               : 'bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500 hover:bg-gray-200 dark:hover:bg-gray-600'
           }`}
         >
-          <CheckCircle className="h-5 w-5" />
+          <CheckCircle className={`h-5 w-5 ${habit.completed ? 'scale-110 transition-transform duration-200' : ''}`} />
         </button>
         <div>
           <div className="flex items-center">
@@ -56,9 +62,35 @@ const HabitCard = ({ habit, onToggleComplete, onEdit, onDelete }: HabitCardProps
             </div>
           </div>
           {habit.streak > 0 && (
-            <p className="text-xs text-muted-foreground mt-1">
-              {habit.streak} day{habit.streak > 1 ? 's' : ''} streak 🔥
-            </p>
+            <div className="flex items-center mt-1">
+              <p className="text-xs text-muted-foreground">
+                {habit.streak} day{habit.streak > 1 ? 's' : ''} streak 🔥
+              </p>
+              
+              <div className="ml-2 w-16 h-1.5 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                <div 
+                  className="h-full bg-primary transition-all duration-300" 
+                  style={{ 
+                    width: `${Math.min(100, (habit.streak / 10) * 100)}%`,
+                  }} 
+                />
+              </div>
+            </div>
+          )}
+          {habit.description && (
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <button className="mt-1 inline-flex items-center text-xs text-primary">
+                    <Info className="h-3 w-3 mr-1" /> 
+                    Details
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>{habit.description}</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           )}
         </div>
       </div>
