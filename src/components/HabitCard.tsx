@@ -2,6 +2,16 @@
 import { useState } from "react";
 import { CheckCircle, MoreVertical, Edit, Trash } from "lucide-react";
 
+interface Habit {
+  id: string;
+  name: string;
+  category: string;
+  categoryColor: string;
+  streak: number;
+  completed: boolean;
+  description?: string;
+}
+
 interface HabitCardProps {
   habit: {
     id: string;
@@ -10,9 +20,10 @@ interface HabitCardProps {
     categoryColor: string;
     streak: number;
     completed: boolean;
+    description?: string;
   };
   onToggleComplete: (id: string) => void;
-  onEdit: (id: string) => void;
+  onEdit: (id: string, updatedData: Partial<Habit>) => void;
   onDelete: (id: string) => void;
 }
 
@@ -63,7 +74,11 @@ const HabitCard = ({ habit, onToggleComplete, onEdit, onDelete }: HabitCardProps
         {showMenu && (
           <div className="absolute right-0 mt-1 w-36 bg-background border border-border rounded-md shadow-md z-10">
             <button 
-              onClick={() => { onEdit(habit.id); setShowMenu(false); }}
+              onClick={() => { 
+                // Pass empty object as second parameter to match the expected signature
+                onEdit(habit.id, {}); 
+                setShowMenu(false); 
+              }}
               className="w-full px-4 py-2 text-left flex items-center hover:bg-muted text-sm rounded-t-md"
             >
               <Edit className="h-4 w-4 mr-2" /> Edit

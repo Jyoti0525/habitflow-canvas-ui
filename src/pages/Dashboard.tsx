@@ -157,6 +157,33 @@ const Dashboard = () => {
   };
   
   const editHabit = (id: string, updatedData: Partial<Habit>) => {
+    // If the updatedData object is empty (which happens when clicking Edit in the menu),
+    // we need to handle showing an edit dialog instead
+    if (Object.keys(updatedData).length === 0) {
+      // Find the habit to edit
+      const habitToEdit = habits.find(h => h.id === id);
+      if (!habitToEdit) return;
+      
+      // Here we would typically open an edit dialog or form
+      // For now, let's just use a simple prompt as a placeholder
+      const newName = prompt("Edit habit name:", habitToEdit.name);
+      if (newName && newName.trim() !== "") {
+        const updatedHabits = habits.map(habit => 
+          habit.id === id 
+            ? { 
+                ...habit, 
+                name: newName
+              } 
+            : habit
+        );
+        
+        setHabits(updatedHabits);
+        toast.success(`"${habitToEdit.name}" renamed to "${newName}"`);
+      }
+      return;
+    }
+    
+    // If updatedData contains values, use those to update the habit
     const updatedHabits = habits.map(habit => 
       habit.id === id 
         ? { 
