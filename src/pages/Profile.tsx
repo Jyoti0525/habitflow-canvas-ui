@@ -35,6 +35,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
 
 const Profile = () => {
   const { user, logout, updateProfile } = useAuth();
@@ -42,18 +43,17 @@ const Profile = () => {
   const [isEditingName, setIsEditingName] = useState(false);
   const [nameValue, setNameValue] = useState(user?.name || "");
   const [isPasswordDialogOpen, setIsPasswordDialogOpen] = useState(false);
-  const [passwordData, setPasswordData] = useState({
-    currentPassword: "",
-    newPassword: "",
-    confirmPassword: ""
-  });
-  const [passwordErrors, setPasswordErrors] = useState({
-    currentPassword: "",
-    newPassword: "",
-    confirmPassword: ""
-  });
   const [passwordUpdateStatus, setPasswordUpdateStatus] = useState<"idle" | "success" | "error">("idle");
   
+  // Create form for password dialog
+  const passwordForm = useForm({
+    defaultValues: {
+      currentPassword: "",
+      newPassword: "",
+      confirmPassword: ""
+    }
+  });
+
   const handleUpdateName = () => {
     if (nameValue.trim() === "") {
       toast.error("Name cannot be empty");
@@ -77,38 +77,49 @@ const Profile = () => {
   };
 
   const validatePasswordForm = () => {
-    const errors = {
-      currentPassword: "",
-      newPassword: "",
-      confirmPassword: ""
-    };
+    const { getValues } = passwordForm;
+    const values = getValues();
     let isValid = true;
     
     // Validate current password
-    if (!passwordData.currentPassword) {
-      errors.currentPassword = "Current password is required";
+    if (!values.currentPassword) {
+      passwordForm.setError('currentPassword', { 
+        type: 'required', 
+        message: 'Current password is required' 
+      });
       isValid = false;
     }
     
     // Validate new password
-    if (!passwordData.newPassword) {
-      errors.newPassword = "New password is required";
+    if (!values.newPassword) {
+      passwordForm.setError('newPassword', { 
+        type: 'required', 
+        message: 'New password is required' 
+      });
       isValid = false;
-    } else if (passwordData.newPassword.length < 8) {
-      errors.newPassword = "Password must be at least 8 characters";
+    } else if (values.newPassword.length < 8) {
+      passwordForm.setError('newPassword', { 
+        type: 'minLength', 
+        message: 'Password must be at least 8 characters' 
+      });
       isValid = false;
     }
     
     // Validate confirm password
-    if (!passwordData.confirmPassword) {
-      errors.confirmPassword = "Please confirm your new password";
+    if (!values.confirmPassword) {
+      passwordForm.setError('confirmPassword', { 
+        type: 'required', 
+        message: 'Please confirm your new password' 
+      });
       isValid = false;
-    } else if (passwordData.confirmPassword !== passwordData.newPassword) {
-      errors.confirmPassword = "Passwords do not match";
+    } else if (values.confirmPassword !== values.newPassword) {
+      passwordForm.setError('confirmPassword', { 
+        type: 'validate', 
+        message: 'Passwords do not match' 
+      });
       isValid = false;
     }
     
-    setPasswordErrors(errors);
     return isValid;
   };
 
@@ -125,11 +136,7 @@ const Profile = () => {
     setTimeout(() => {
       toast.success("Password changed successfully");
       setIsPasswordDialogOpen(false);
-      setPasswordData({
-        currentPassword: "",
-        newPassword: "",
-        confirmPassword: ""
-      });
+      passwordForm.reset();
       setPasswordUpdateStatus("idle");
     }, 1500);
   };
@@ -329,77 +336,78 @@ const Profile = () => {
             </DialogDescription>
           </DialogHeader>
           
-          <div className="grid gap-4 py-4">
-            <div className="grid gap-2">
-              <FormLabel htmlFor="currentPassword">Current Password</FormLabel>
-              <Input
-                id="currentPassword"
-                type="password"
-                value={passwordData.currentPassword}
-                onChange={(e) => setPasswordData({...passwordData, currentPassword: e.target.value})}
-                className={passwordErrors.currentPassword ? "border-destructive" : ""}
+          <Form {...passwordForm}>
+            <div className="grid gap-4 py-4">
+              <FormField
+                control={passwordForm.control}
+                name="currentPassword"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Current Password</FormLabel>
+                    <FormControl>
+                      <Input type="password" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
-              {passwordErrors.currentPassword && (
-                <p className="text-sm text-destructive">{passwordErrors.currentPassword}</p>
+              
+              <FormField
+                control={passwordForm.control}
+                name="newPassword"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>New Password</FormLabel>
+                    <FormControl>
+                      <Input type="password" {...field} />
+                    </FormControl>
+                    <FormDescription>Must be at least 8 characters</FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={passwordForm.control}
+                name="confirmPassword"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Confirm New Password</FormLabel>
+                    <FormControl>
+                      <Input type="password" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              {passwordUpdateStatus === "success" && (
+                <div className="flex items-center text-sm text-green-600 gap-1">
+                  <Check className="h-4 w-4" />
+                  Password updated successfully
+                </div>
+              )}
+              
+              {passwordUpdateStatus === "error" && (
+                <div className="flex items-center text-sm text-destructive gap-1">
+                  <X className="h-4 w-4" />
+                  Failed to update password
+                </div>
               )}
             </div>
-            
-            <div className="grid gap-2">
-              <FormLabel htmlFor="newPassword">New Password</FormLabel>
-              <Input
-                id="newPassword"
-                type="password"
-                value={passwordData.newPassword}
-                onChange={(e) => setPasswordData({...passwordData, newPassword: e.target.value})}
-                className={passwordErrors.newPassword ? "border-destructive" : ""}
-              />
-              {passwordErrors.newPassword ? (
-                <p className="text-sm text-destructive">{passwordErrors.newPassword}</p>
-              ) : (
-                <FormDescription>Must be at least 8 characters</FormDescription>
-              )}
-            </div>
-            
-            <div className="grid gap-2">
-              <FormLabel htmlFor="confirmPassword">Confirm New Password</FormLabel>
-              <Input
-                id="confirmPassword"
-                type="password"
-                value={passwordData.confirmPassword}
-                onChange={(e) => setPasswordData({...passwordData, confirmPassword: e.target.value})}
-                className={passwordErrors.confirmPassword ? "border-destructive" : ""}
-              />
-              {passwordErrors.confirmPassword && (
-                <p className="text-sm text-destructive">{passwordErrors.confirmPassword}</p>
-              )}
-            </div>
-            
-            {passwordUpdateStatus === "success" && (
-              <div className="flex items-center text-sm text-green-600 gap-1">
-                <Check className="h-4 w-4" />
-                Password updated successfully
-              </div>
-            )}
-            
-            {passwordUpdateStatus === "error" && (
-              <div className="flex items-center text-sm text-destructive gap-1">
-                <X className="h-4 w-4" />
-                Failed to update password
-              </div>
-            )}
-          </div>
           
-          <DialogFooter>
-            <DialogClose asChild>
-              <Button variant="outline">Cancel</Button>
-            </DialogClose>
-            <Button 
-              onClick={handleChangePassword}
-              disabled={passwordUpdateStatus === "success"}
-            >
-              Update Password
-            </Button>
-          </DialogFooter>
+            <DialogFooter>
+              <DialogClose asChild>
+                <Button variant="outline">Cancel</Button>
+              </DialogClose>
+              <Button 
+                onClick={handleChangePassword}
+                disabled={passwordUpdateStatus === "success"}
+              >
+                Update Password
+              </Button>
+            </DialogFooter>
+          </Form>
         </DialogContent>
       </Dialog>
     </div>
