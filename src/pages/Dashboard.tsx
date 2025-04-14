@@ -1,8 +1,10 @@
+
 import { useState, useEffect } from "react";
+import Header from "../components/Header";
 import Sidebar from "../components/Sidebar";
 import HabitCard from "../components/HabitCard";
 import ProgressBar from "../components/ProgressBar";
-import { Search, Filter, Bell, User, Plus, X } from "lucide-react";
+import { Search, Filter, Plus, X } from "lucide-react";
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
@@ -34,6 +36,7 @@ interface Habit {
   completed: boolean;
   createdAt: string;
   userId: string;
+  description?: string;
 }
 
 const categories = [
@@ -54,6 +57,7 @@ const Dashboard = () => {
   const [newHabit, setNewHabit] = useState({
     name: '',
     category: 'Wellness',
+    description: ''
   });
   
   useEffect(() => {
@@ -82,6 +86,7 @@ const Dashboard = () => {
     }
   }, [user, addNotification]);
   
+  // Update localStorage when habits change
   useEffect(() => {
     if (user && habits.length > 0) {
       localStorage.setItem(`habitflow_habits_${user.id}`, JSON.stringify(habits));
@@ -195,7 +200,8 @@ const Dashboard = () => {
       streak: 0,
       completed: false,
       createdAt: new Date().toISOString(),
-      userId: user?.id || 'unknown'
+      userId: user?.id || 'unknown',
+      description: newHabit.description
     };
     
     setHabits([...habits, habit]);
@@ -206,7 +212,7 @@ const Dashboard = () => {
     });
     
     toast.success(`"${newHabit.name}" created`);
-    setNewHabit({ name: '', category: 'Wellness' });
+    setNewHabit({ name: '', category: 'Wellness', description: '' });
     setIsAddHabitOpen(false);
   };
   
@@ -228,18 +234,7 @@ const Dashboard = () => {
       <Sidebar />
       
       <div className="ml-20 lg:ml-64">
-        <header className="h-16 border-b border-border flex items-center justify-between px-6">
-          <h1 className="text-xl font-semibold">Dashboard</h1>
-          
-          <div className="flex items-center space-x-4">
-            <button className="p-2 rounded-full hover:bg-muted">
-              <Bell className="h-5 w-5" />
-            </button>
-            <button className="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center">
-              <User className="h-5 w-5" />
-            </button>
-          </div>
-        </header>
+        <Header />
         
         <main className="p-6">
           <div className="mb-8">
@@ -324,13 +319,7 @@ const Dashboard = () => {
                   key={habit.id} 
                   habit={habit} 
                   onToggleComplete={toggleComplete}
-                  onEdit={(id) => {
-                    const habit = habits.find(h => h.id === id);
-                    if (habit) {
-                      setNewHabit({ name: habit.name, category: habit.category });
-                      toast.info(`Editing habit: ${habit.name}`);
-                    }
-                  }}
+                  onEdit={editHabit}
                   onDelete={deleteHabit}
                 />
               ))}
@@ -396,6 +385,18 @@ const Dashboard = () => {
                   ))}
                 </SelectContent>
               </Select>
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="habit-description" className="text-right">
+                Description
+              </Label>
+              <Input
+                id="habit-description"
+                value={newHabit.description}
+                onChange={(e) => setNewHabit({ ...newHabit, description: e.target.value })}
+                placeholder="e.g. 10 minutes of mindfulness"
+                className="col-span-3"
+              />
             </div>
           </div>
           

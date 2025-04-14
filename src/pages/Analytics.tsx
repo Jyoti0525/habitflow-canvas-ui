@@ -112,7 +112,7 @@ const Analytics = () => {
   const [timeRange, setTimeRange] = useState("week");
 
   return (
-    <div className="flex min-h-screen bg-background">
+    <div className="min-h-screen bg-background">
       <Sidebar />
       
       <div className="flex-1 ml-[80px] lg:ml-64">

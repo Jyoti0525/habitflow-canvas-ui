@@ -1,5 +1,6 @@
 
 import { useState } from "react";
+import Header from "../components/Header";
 import Sidebar from "../components/Sidebar";
 import { Plus, ThumbsUp, ThumbsDown, Info } from "lucide-react";
 import { toast } from "sonner";
@@ -115,10 +116,7 @@ const Suggestions = () => {
       <Sidebar />
       
       <div className="ml-20 lg:ml-64">
-        {/* Top Bar */}
-        <header className="h-16 border-b border-border flex items-center justify-between px-6">
-          <h1 className="text-xl font-semibold">Habit Suggestions</h1>
-        </header>
+        <Header />
         
         <main className="p-6">
           <div className="mb-8 bg-muted/50 p-4 rounded-lg flex items-center">
