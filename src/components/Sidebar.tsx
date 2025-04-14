@@ -1,11 +1,17 @@
 
 import { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
-import { Calendar, LayoutDashboard, Settings, User, BarChart2, PlusCircle, ChevronLeft, ChevronRight, Lightbulb } from "lucide-react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { 
+  Calendar, LayoutDashboard, Settings, User, 
+  BarChart2, PlusCircle, ChevronLeft, ChevronRight, Lightbulb 
+} from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Sidebar = () => {
   const [collapsed, setCollapsed] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
+  const { addNotification } = useAuth();
   
   const navItems = [
     { name: 'Dashboard', icon: <LayoutDashboard size={20} />, path: '/dashboard' },
@@ -15,6 +21,19 @@ const Sidebar = () => {
     { name: 'Profile', icon: <User size={20} />, path: '/profile' },
     { name: 'Settings', icon: <Settings size={20} />, path: '/settings' },
   ];
+  
+  const handleAddHabit = () => {
+    // Navigate to dashboard with add habit dialog open
+    navigate('/dashboard');
+    // We'll use localStorage to signal to the Dashboard that we want to open the add habit dialog
+    localStorage.setItem('openAddHabitDialog', 'true');
+    
+    // Add a notification
+    addNotification({
+      message: "Ready to add a new habit? Let's build a better routine!",
+      type: "info"
+    });
+  };
   
   return (
     <aside 
@@ -61,13 +80,13 @@ const Sidebar = () => {
       </nav>
       
       <div className="p-3 border-t border-border">
-        <Link
-          to="/add-habit"
-          className={`flex items-center justify-center px-3 py-3 bg-secondary text-secondary-foreground rounded-md transition-colors hover:bg-secondary/90`}
+        <button
+          onClick={handleAddHabit}
+          className={`flex items-center justify-center px-3 py-3 bg-secondary text-secondary-foreground rounded-md transition-colors hover:bg-secondary/90 w-full`}
         >
           <PlusCircle size={20} />
           {!collapsed && <span className="ml-2">Add New Habit</span>}
-        </Link>
+        </button>
       </div>
       
       <button

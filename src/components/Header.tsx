@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import ThemeToggle from "./ThemeToggle";
 import { Menu, X, User, BarChart2, LogOut, ChevronDown, Bell, Check, Trash2 } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -23,6 +23,7 @@ const Header = () => {
   } = useAuth();
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
+  const location = useLocation();
   
   const popoverRef = useRef<HTMLDivElement>(null);
   const notificationsRef = useRef<HTMLDivElement>(null);
@@ -30,20 +31,10 @@ const Header = () => {
   const unreadCount = notifications.filter(n => !n.read).length;
 
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (popoverRef.current && !popoverRef.current.contains(event.target as Node)) {
-        setIsProfileOpen(false);
-      }
-      if (notificationsRef.current && !notificationsRef.current.contains(event.target as Node)) {
-        setIsNotificationsOpen(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
+    setIsProfileOpen(false);
+    setIsNotificationsOpen(false);
+    setIsMenuOpen(false);
+  }, [location]);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -62,17 +53,14 @@ const Header = () => {
     const date = new Date(timestamp);
     const now = new Date();
     
-    // If it's today, just show the time
     if (date.toDateString() === now.toDateString()) {
       return format(date, "h:mm a");
     }
     
-    // If it's within the last 7 days, show the day name
     if (now.getTime() - date.getTime() < 7 * 24 * 60 * 60 * 1000) {
       return format(date, "EEEE 'at' h:mm a");
     }
     
-    // Otherwise show the full date
     return format(date, "MMM d 'at' h:mm a");
   };
 
@@ -104,7 +92,6 @@ const Header = () => {
             
             {isAuthenticated && (
               <>
-                {/* Notifications Bell */}
                 <Popover open={isNotificationsOpen} onOpenChange={setIsNotificationsOpen}>
                   <PopoverTrigger asChild>
                     <button 
@@ -187,7 +174,6 @@ const Header = () => {
                   </PopoverContent>
                 </Popover>
                 
-                {/* User Profile */}
                 <Popover open={isProfileOpen} onOpenChange={setIsProfileOpen}>
                   <PopoverTrigger asChild>
                     <button 
@@ -246,7 +232,6 @@ const Header = () => {
           <ThemeToggle />
           {isAuthenticated && (
             <>
-              {/* Mobile Notifications Bell */}
               <button 
                 onClick={() => setIsNotificationsOpen(!isNotificationsOpen)} 
                 className="relative p-1 rounded-full hover:bg-muted"
@@ -262,7 +247,6 @@ const Header = () => {
                 )}
               </button>
               
-              {/* Mobile User Avatar */}
               <button 
                 onClick={() => setIsProfileOpen(!isProfileOpen)} 
                 className="p-1 rounded-full hover:bg-muted"
@@ -283,7 +267,6 @@ const Header = () => {
         </div>
       </div>
       
-      {/* Mobile Menu */}
       {isMenuOpen && (
         <div className="md:hidden absolute top-16 left-0 right-0 bg-background border-b border-border z-50 animate-fade-in">
           <nav className="container mx-auto flex flex-col space-y-4 p-4">
@@ -342,7 +325,6 @@ const Header = () => {
         </div>
       )}
       
-      {/* Mobile Profile Dropdown */}
       {isProfileOpen && isAuthenticated && !isMenuOpen && (
         <div className="md:hidden absolute top-16 right-0 w-64 bg-background border border-border rounded-md shadow-lg z-50 m-2 animate-fade-in">
           <div className="p-4 space-y-2">
@@ -374,7 +356,6 @@ const Header = () => {
         </div>
       )}
       
-      {/* Mobile Notifications Dropdown */}
       {isNotificationsOpen && isAuthenticated && !isMenuOpen && (
         <div className="md:hidden absolute top-16 right-0 w-full max-w-sm bg-background border border-border rounded-md shadow-lg z-50 m-2 animate-fade-in">
           <div className="p-4">

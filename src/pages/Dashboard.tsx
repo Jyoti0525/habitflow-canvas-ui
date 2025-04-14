@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import Sidebar from "../components/Sidebar";
 import HabitCard from "../components/HabitCard";
@@ -26,7 +25,6 @@ import {
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 
-// Define habit interface
 interface Habit {
   id: string;
   name: string;
@@ -38,7 +36,6 @@ interface Habit {
   userId: string;
 }
 
-// Mock categories
 const categories = [
   { name: 'All', color: '#6B7280' },
   { name: 'Fitness', color: '#EC4899' },
@@ -59,7 +56,6 @@ const Dashboard = () => {
     category: 'Wellness',
   });
   
-  // Load habits from localStorage
   useEffect(() => {
     if (user) {
       const savedHabits = localStorage.getItem(`habitflow_habits_${user.id}`);
@@ -70,7 +66,6 @@ const Dashboard = () => {
           console.error("Failed to parse saved habits:", error);
         }
       } else {
-        // Add sample habits for new users
         const initialHabits = [
           { id: '1', name: 'Morning Meditation', category: 'Wellness', categoryColor: '#8B5CF6', streak: 0, completed: false, createdAt: new Date().toISOString(), userId: user.id },
           { id: '2', name: '10,000 Steps', category: 'Fitness', categoryColor: '#EC4899', streak: 0, completed: false, createdAt: new Date().toISOString(), userId: user.id },
@@ -79,7 +74,6 @@ const Dashboard = () => {
         setHabits(initialHabits);
         localStorage.setItem(`habitflow_habits_${user.id}`, JSON.stringify(initialHabits));
         
-        // Send welcome notification
         addNotification({
           message: "We've added some sample habits to get you started!",
           type: "info"
@@ -88,12 +82,19 @@ const Dashboard = () => {
     }
   }, [user, addNotification]);
   
-  // Save habits to localStorage whenever they change
   useEffect(() => {
     if (user && habits.length > 0) {
       localStorage.setItem(`habitflow_habits_${user.id}`, JSON.stringify(habits));
     }
   }, [habits, user]);
+  
+  useEffect(() => {
+    const shouldOpenDialog = localStorage.getItem('openAddHabitDialog');
+    if (shouldOpenDialog === 'true') {
+      setIsAddHabitOpen(true);
+      localStorage.removeItem('openAddHabitDialog');
+    }
+  }, []);
   
   const completedHabits = habits.filter(h => h.completed).length;
   const totalHabits = habits.length;
@@ -110,7 +111,6 @@ const Dashboard = () => {
         ? { 
             ...habit, 
             completed: !habit.completed,
-            // Increment streak only if marking complete and wasn't already completed
             streak: !wasCompleted && !habit.completed 
               ? habit.streak + 1 
               : (wasCompleted && habit.completed ? Math.max(0, habit.streak - 1) : habit.streak)
@@ -126,7 +126,6 @@ const Dashboard = () => {
     if (isCompleted) {
       toast.success(`"${habitName}" marked as complete!`);
       
-      // Add streak milestone notifications
       const newStreak = habitToToggle.streak + 1;
       if (newStreak === 3) {
         addNotification({
@@ -158,7 +157,6 @@ const Dashboard = () => {
         ? { 
             ...habit, 
             ...updatedData,
-            // Update category color if category changed
             categoryColor: updatedData.category 
               ? categories.find(c => c.name === updatedData.category)?.color || habit.categoryColor
               : habit.categoryColor
@@ -175,7 +173,6 @@ const Dashboard = () => {
     setHabits(habits.filter(habit => habit.id !== id));
     toast.error(`"${habitName}" deleted`);
     
-    // Add notification about deletion
     addNotification({
       message: `You've deleted "${habitName}" from your habits`,
       type: "info"
@@ -203,7 +200,6 @@ const Dashboard = () => {
     
     setHabits([...habits, habit]);
     
-    // Add notification
     addNotification({
       message: `New habit "${newHabit.name}" created. Start building consistency!`,
       type: "success"
@@ -214,20 +210,17 @@ const Dashboard = () => {
     setIsAddHabitOpen(false);
   };
   
-  // Filter habits based on category and search query
   const filteredHabits = habits.filter(habit => 
     (selectedCategory === 'All' || habit.category === selectedCategory) &&
     habit.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
   
-  // Calculate the longest streak
   const longestStreak = habits.length > 0 
     ? Math.max(...habits.map(h => h.streak))
     : 0;
   
-  // Calculate perfect days this week (simplified)
   const perfectDays = habits.length > 0 
-    ? Math.min(7, Math.floor(Math.random() * 4) + 1) // Mock data - would be calculated from actual habit completion dates
+    ? Math.min(7, Math.floor(Math.random() * 4) + 1)
     : 0;
   
   return (
@@ -235,7 +228,6 @@ const Dashboard = () => {
       <Sidebar />
       
       <div className="ml-20 lg:ml-64">
-        {/* Top Bar */}
         <header className="h-16 border-b border-border flex items-center justify-between px-6">
           <h1 className="text-xl font-semibold">Dashboard</h1>
           
@@ -250,7 +242,6 @@ const Dashboard = () => {
         </header>
         
         <main className="p-6">
-          {/* Progress Overview */}
           <div className="mb-8">
             <h2 className="text-lg font-semibold mb-4">Today's Progress</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -287,7 +278,6 @@ const Dashboard = () => {
             </div>
           </div>
           
-          {/* Habits List */}
           <div>
             <div className="flex flex-col md:flex-row md:items-center justify-between mb-6">
               <h2 className="text-lg font-semibold mb-2 md:mb-0">My Habits</h2>
@@ -359,7 +349,6 @@ const Dashboard = () => {
         </main>
       </div>
       
-      {/* Add Habit Dialog */}
       <Dialog open={isAddHabitOpen} onOpenChange={setIsAddHabitOpen}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>

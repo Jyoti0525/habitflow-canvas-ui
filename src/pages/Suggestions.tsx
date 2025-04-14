@@ -3,6 +3,7 @@ import { useState } from "react";
 import Sidebar from "../components/Sidebar";
 import { Plus, ThumbsUp, ThumbsDown, Info } from "lucide-react";
 import { toast } from "sonner";
+import { useAuth } from "../contexts/AuthContext";
 
 interface SuggestionItem {
   id: string;
@@ -14,6 +15,7 @@ interface SuggestionItem {
 }
 
 const Suggestions = () => {
+  const { user, addNotification } = useAuth();
   // Mock suggestions data
   const [suggestions, setSuggestions] = useState<SuggestionItem[]>([
     {
@@ -67,8 +69,37 @@ const Suggestions = () => {
   ]);
   
   const addToMyHabits = (suggestion: SuggestionItem) => {
-    // In a real app, this would add the habit to the user's list
+    // Get existing habits from localStorage
+    const existingHabits = localStorage.getItem(`habitflow_habits_${user?.id}`) || "[]";
+    let habits = JSON.parse(existingHabits);
+    
+    // Create new habit from suggestion
+    const newHabit = {
+      id: `habit-${Date.now()}`,
+      name: suggestion.name,
+      category: suggestion.category,
+      categoryColor: suggestion.categoryColor,
+      streak: 0,
+      completed: false,
+      createdAt: new Date().toISOString(),
+      userId: user?.id || 'unknown',
+      description: suggestion.description
+    };
+    
+    // Add to habits list
+    habits.push(newHabit);
+    
+    // Save to localStorage
+    localStorage.setItem(`habitflow_habits_${user?.id}`, JSON.stringify(habits));
+    
+    // Show success toast
     toast.success(`Added "${suggestion.name}" to your habits!`);
+    
+    // Add notification
+    addNotification({
+      message: `New habit "${suggestion.name}" added to your list!`,
+      type: "success"
+    });
     
     // Remove from suggestions
     setSuggestions(suggestions.filter(s => s.id !== suggestion.id));
