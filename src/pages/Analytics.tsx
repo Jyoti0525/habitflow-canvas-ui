@@ -1,5 +1,4 @@
-
-import { useState } from "react";
+import { useState, useNavigate } from "react";
 import Header from "@/components/Header";
 import Sidebar from "@/components/Sidebar";
 import { Button } from "@/components/ui/button";
@@ -35,6 +34,7 @@ import {
   Sparkles, 
   TrendingUp
 } from "lucide-react";
+import { format, subDays, subMonths } from "date-fns";
 
 // Mock data for charts
 const weeklyData = [
@@ -108,16 +108,45 @@ const chartConfig = {
   },
 };
 
+const generateTimeRangeData = (timeRange: string) => {
+  const today = new Date();
+  let data;
+  
+  switch (timeRange) {
+    case "week":
+      data = weeklyData;
+      break;
+    case "month":
+      data = Array.from({ length: 30 }, (_, i) => ({
+        day: format(subDays(today, i), "MM/dd"),
+        completed: Math.floor(Math.random() * 8) + 2,
+        total: Math.floor(Math.random() * 3) + 8,
+      })).reverse();
+      break;
+    case "year":
+      data = Array.from({ length: 12 }, (_, i) => ({
+        day: format(subMonths(today, i), "MMM"),
+        completed: Math.floor(Math.random() * 80) + 20,
+        total: Math.floor(Math.random() * 30) + 80,
+      })).reverse();
+      break;
+    default:
+      data = weeklyData;
+  }
+  
+  return data;
+};
+
 const Analytics = () => {
   const [timeRange, setTimeRange] = useState("week");
+  const navigate = useNavigate();
+  const chartData = generateTimeRangeData(timeRange);
 
   return (
     <div className="min-h-screen bg-background">
       <Sidebar />
-      
       <div className="flex-1 ml-[80px] lg:ml-64">
         <Header />
-        
         <main className="container mx-auto px-4 py-8">
           {/* Motivational Banner */}
           <Card className="mb-6 bg-gradient-to-r from-primary/20 to-secondary/20 border-none">
@@ -132,15 +161,16 @@ const Analytics = () => {
                 </div>
               </div>
               <div className="hidden md:block">
-                <Button>View Details</Button>
+                <Button onClick={() => navigate('/detailed-analytics')}>
+                  View Details
+                </Button>
               </div>
             </CardContent>
           </Card>
-          
+
           {/* Time Range Filter */}
           <div className="flex items-center justify-between mb-6 flex-wrap gap-4">
             <h1 className="text-3xl font-bold">Habit Analytics</h1>
-            
             <div className="flex items-center gap-2">
               <Button 
                 variant={timeRange === "week" ? "default" : "outline"}
@@ -160,13 +190,17 @@ const Analytics = () => {
               >
                 Year
               </Button>
-              <Button variant="outline" className="ml-2">
+              <Button 
+                variant="outline" 
+                className="ml-2"
+                onClick={() => navigate('/detailed-analytics')}
+              >
                 <Filter className="h-4 w-4 mr-2" />
                 Custom
               </Button>
             </div>
           </div>
-          
+
           {/* KPI Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
             <Card>
@@ -245,7 +279,7 @@ const Analytics = () => {
               </CardContent>
             </Card>
           </div>
-          
+
           {/* Charts */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
             {/* Weekly Progress Chart */}
@@ -256,7 +290,7 @@ const Analytics = () => {
               </CardHeader>
               <CardContent>
                 <ChartContainer config={chartConfig} className="h-[300px]">
-                  <BarChart data={weeklyData} barGap={0} barCategoryGap="30%">
+                  <BarChart data={chartData} barGap={0} barCategoryGap="30%">
                     <CartesianGrid strokeDasharray="3 3" vertical={false} />
                     <XAxis 
                       dataKey="day"
@@ -318,7 +352,7 @@ const Analytics = () => {
               </CardContent>
             </Card>
           </div>
-          
+
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Category Distribution */}
             <Card>
@@ -395,7 +429,7 @@ const Analytics = () => {
               </CardContent>
             </Card>
           </div>
-          
+
           {/* Insights Section */}
           <Card className="mt-6">
             <CardHeader>

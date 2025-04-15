@@ -27,6 +27,7 @@ import Blog from "./pages/Blog";
 import About from "./pages/About";
 import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
+import DetailedAnalytics from "./pages/DetailedAnalytics";
 
 const queryClient = new QueryClient();
 
@@ -55,6 +56,7 @@ const AppRoutes = () => (
       <Route path="/suggestions" element={<Suggestions />} />
       <Route path="/profile" element={<Profile />} />
       <Route path="/analytics" element={<Analytics />} />
+      <Route path="/detailed-analytics" element={<DetailedAnalytics />} />
     </Route>
     
     {/* 404 route */}
