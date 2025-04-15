@@ -1,3 +1,4 @@
+
 import { ArrowRight, Calendar, Bell, BarChart2, CheckCircle, Star, LayoutDashboard } from "lucide-react";
 import { Link as RouterLink } from "react-router-dom";
 import Header from "../components/Header";
@@ -195,12 +196,12 @@ const Index = () => {
                 <h2 className="text-3xl md:text-4xl font-bold mb-4">Start Your Habit Journey Today</h2>
                 <p className="text-lg mb-8">Join thousands of users who are building better habits one day at a time.</p>
                 <div className="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
-                  <Link to="/dashboard" className="btn-primary">
+                  <RouterLink to="/dashboard" className="btn-primary">
                     Get Started For Free
-                  </Link>
-                  <Link to="/features" className="btn-secondary">
+                  </RouterLink>
+                  <RouterLink to="/features" className="btn-secondary">
                     Learn More
-                  </Link>
+                  </RouterLink>
                 </div>
               </div>
             </div>

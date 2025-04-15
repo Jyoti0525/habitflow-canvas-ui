@@ -6,7 +6,7 @@ import { Suspense } from 'react';
 const HeroBackground = () => {
   return (
     <div className="absolute inset-0 -z-10">
-      <Canvas>
+      <Canvas camera={{ position: [0, 0, 5] }}>
         <Suspense fallback={null}>
           <Stars radius={50} depth={50} count={1000} factor={4} fade speed={1} />
           <Cloud
