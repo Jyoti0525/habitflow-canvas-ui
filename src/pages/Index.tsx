@@ -1,18 +1,23 @@
-
 import { ArrowRight, Calendar, Bell, BarChart2, CheckCircle, Star, LayoutDashboard } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link as RouterLink } from "react-router-dom";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
+import HeroBackground from "../components/HeroBackground";
 
 const Index = () => {
+  const scrollToDemo = () => {
+    document.getElementById('demo-section')?.scrollIntoView({ behavior: 'smooth' });
+  };
+
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
       
       <main className="flex-1">
         {/* Hero Section */}
-        <section className="bg-gradient-to-br from-blue-50 to-purple-50 dark:from-gray-900 dark:to-gray-800 py-20 md:py-32">
-          <div className="container mx-auto px-4 md:px-8">
+        <section className="bg-gradient-to-br from-blue-50 to-purple-50 dark:from-gray-900 dark:to-gray-800 py-20 md:py-32 relative overflow-hidden">
+          <HeroBackground />
+          <div className="container mx-auto px-4 md:px-8 relative z-10">
             <div className="flex flex-col md:flex-row items-center">
               <div className="md:w-1/2 md:pr-12 mb-12 md:mb-0">
                 <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6 animate-slide-up [animation-delay:0.1s] opacity-0">
@@ -25,12 +30,14 @@ const Index = () => {
                   Build lasting habits with a beautiful, intuitive habit tracker that helps you stay consistent and achieve your goals.
                 </p>
                 <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 animate-slide-up [animation-delay:0.3s] opacity-0">
-                  <Link to="/dashboard" className="btn-primary flex items-center justify-center">
-                    Get Started <ArrowRight className="ml-2 h-5 w-5" />
-                  </Link>
-                  <Link to="/demo" className="btn-secondary flex items-center justify-center">
+                  <RouterLink to="/dashboard" className="btn-primary flex items-center justify-center group">
+                    Get Started 
+                    <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
+                  </RouterLink>
+                  <button onClick={scrollToDemo} className="btn-secondary flex items-center justify-center group">
                     Try Demo
-                  </Link>
+                    <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
+                  </button>
                 </div>
               </div>
               <div className="md:w-1/2 relative animate-slide-right [animation-delay:0.4s] opacity-0">
@@ -77,7 +84,7 @@ const Index = () => {
         </section>
         
         {/* Features Section */}
-        <section className="py-20 md:py-28">
+        <section className="py-20 md:py-28" id="demo-section">
           <div className="container mx-auto px-4 md:px-8">
             <div className="text-center max-w-2xl mx-auto mb-16">
               <h2 className="text-3xl md:text-4xl font-bold mb-4">Powerful Features</h2>
@@ -117,7 +124,10 @@ const Index = () => {
                   description: "Get personalized habit recommendations based on your goals and existing habits."
                 }
               ].map((feature, index) => (
-                <div key={index} className="card hover:shadow-md group">
+                <div 
+                  key={index} 
+                  className="card hover:shadow-md group transition-all duration-300 hover:scale-105 hover:rotate-1"
+                >
                   <div className="mb-4 p-3 bg-primary/10 rounded-full inline-block group-hover:bg-primary/20 transition-colors">
                     {feature.icon}
                   </div>

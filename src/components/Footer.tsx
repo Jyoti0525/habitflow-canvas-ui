@@ -1,5 +1,6 @@
 
 import { Link } from "react-router-dom";
+import { Github, Twitter, Linkedin } from "lucide-react";
 
 const Footer = () => {
   return (
@@ -14,32 +15,89 @@ const Footer = () => {
               <span className="font-bold text-xl text-foreground">HabitFlow</span>
             </div>
             <p className="text-muted-foreground mb-4">Consistency is key to transforming your daily actions into lasting habits.</p>
+            
+            <div className="flex space-x-4">
+              <a href="https://github.com" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground transition-colors">
+                <Github className="h-5 w-5 hover:scale-110 transition-transform" />
+              </a>
+              <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground transition-colors">
+                <Twitter className="h-5 w-5 hover:scale-110 transition-transform" />
+              </a>
+              <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground transition-colors">
+                <Linkedin className="h-5 w-5 hover:scale-110 transition-transform" />
+              </a>
+            </div>
           </div>
           
           <div>
             <h3 className="font-semibold text-lg mb-4">Product</h3>
             <ul className="space-y-2">
-              <li><Link to="/features" className="text-muted-foreground hover:text-foreground transition-colors">Features</Link></li>
-              <li><Link to="/pricing" className="text-muted-foreground hover:text-foreground transition-colors">Pricing</Link></li>
-              <li><Link to="/testimonials" className="text-muted-foreground hover:text-foreground transition-colors">Testimonials</Link></li>
+              <li>
+                <Link to="/features" className="text-muted-foreground hover:text-foreground transition-colors relative group">
+                  Features
+                  <span className="absolute left-0 -bottom-0.5 w-0 h-0.5 bg-primary transition-all group-hover:w-full"></span>
+                </Link>
+              </li>
+              <li>
+                <Link to="/pricing" className="text-muted-foreground hover:text-foreground transition-colors relative group">
+                  Pricing
+                  <span className="absolute left-0 -bottom-0.5 w-0 h-0.5 bg-primary transition-all group-hover:w-full"></span>
+                </Link>
+              </li>
+              <li>
+                <Link to="/testimonials" className="text-muted-foreground hover:text-foreground transition-colors relative group">
+                  Testimonials
+                  <span className="absolute left-0 -bottom-0.5 w-0 h-0.5 bg-primary transition-all group-hover:w-full"></span>
+                </Link>
+              </li>
             </ul>
           </div>
           
           <div>
             <h3 className="font-semibold text-lg mb-4">Resources</h3>
             <ul className="space-y-2">
-              <li><Link to="/blog" className="text-muted-foreground hover:text-foreground transition-colors">Blog</Link></li>
-              <li><Link to="/guides" className="text-muted-foreground hover:text-foreground transition-colors">Guides</Link></li>
-              <li><Link to="/support" className="text-muted-foreground hover:text-foreground transition-colors">Support</Link></li>
+              <li>
+                <Link to="/blog" className="text-muted-foreground hover:text-foreground transition-colors relative group">
+                  Blog
+                  <span className="absolute left-0 -bottom-0.5 w-0 h-0.5 bg-primary transition-all group-hover:w-full"></span>
+                </Link>
+              </li>
+              <li>
+                <Link to="/guides" className="text-muted-foreground hover:text-foreground transition-colors relative group">
+                  Guides
+                  <span className="absolute left-0 -bottom-0.5 w-0 h-0.5 bg-primary transition-all group-hover:w-full"></span>
+                </Link>
+              </li>
+              <li>
+                <Link to="/support" className="text-muted-foreground hover:text-foreground transition-colors relative group">
+                  Support
+                  <span className="absolute left-0 -bottom-0.5 w-0 h-0.5 bg-primary transition-all group-hover:w-full"></span>
+                </Link>
+              </li>
             </ul>
           </div>
           
           <div>
             <h3 className="font-semibold text-lg mb-4">Company</h3>
             <ul className="space-y-2">
-              <li><Link to="/about" className="text-muted-foreground hover:text-foreground transition-colors">About Us</Link></li>
-              <li><Link to="/privacy" className="text-muted-foreground hover:text-foreground transition-colors">Privacy Policy</Link></li>
-              <li><Link to="/terms" className="text-muted-foreground hover:text-foreground transition-colors">Terms of Service</Link></li>
+              <li>
+                <Link to="/about" className="text-muted-foreground hover:text-foreground transition-colors relative group">
+                  About Us
+                  <span className="absolute left-0 -bottom-0.5 w-0 h-0.5 bg-primary transition-all group-hover:w-full"></span>
+                </Link>
+              </li>
+              <li>
+                <Link to="/privacy" className="text-muted-foreground hover:text-foreground transition-colors relative group">
+                  Privacy Policy
+                  <span className="absolute left-0 -bottom-0.5 w-0 h-0.5 bg-primary transition-all group-hover:w-full"></span>
+                </Link>
+              </li>
+              <li>
+                <Link to="/terms" className="text-muted-foreground hover:text-foreground transition-colors relative group">
+                  Terms of Service
+                  <span className="absolute left-0 -bottom-0.5 w-0 h-0.5 bg-primary transition-all group-hover:w-full"></span>
+                </Link>
+              </li>
             </ul>
           </div>
         </div>
