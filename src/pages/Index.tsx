@@ -1,4 +1,3 @@
-
 import { ArrowRight, Calendar, Bell, BarChart2, CheckCircle, Star, LayoutDashboard } from "lucide-react";
 import { Link as RouterLink } from "react-router-dom";
 import Header from "../components/Header";
@@ -6,8 +5,9 @@ import Footer from "../components/Footer";
 import HeroBackground from "../components/HeroBackground";
 
 const Index = () => {
-  const scrollToDemo = () => {
-    document.getElementById('demo-section')?.scrollIntoView({ behavior: 'smooth' });
+  const scrollToSection = (sectionId: string) => {
+    const element = document.getElementById(sectionId);
+    element?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
   return (
@@ -35,7 +35,7 @@ const Index = () => {
                     Get Started 
                     <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
                   </RouterLink>
-                  <button onClick={scrollToDemo} className="btn-secondary flex items-center justify-center group">
+                  <button onClick={() => scrollToSection('features-section')} className="btn-secondary flex items-center justify-center group">
                     Try Demo
                     <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
                   </button>
@@ -85,7 +85,7 @@ const Index = () => {
         </section>
         
         {/* Features Section */}
-        <section className="py-20 md:py-28" id="demo-section">
+        <section id="features-section" className="py-20 md:py-28">
           <div className="container mx-auto px-4 md:px-8">
             <div className="text-center max-w-2xl mx-auto mb-16">
               <h2 className="text-3xl md:text-4xl font-bold mb-4">Powerful Features</h2>
@@ -127,7 +127,7 @@ const Index = () => {
               ].map((feature, index) => (
                 <div 
                   key={index} 
-                  className="card hover:shadow-md group transition-all duration-300 hover:scale-105 hover:rotate-1"
+                  className="card hover:shadow-lg transition-all duration-300 hover:scale-105 hover:rotate-1 group"
                 >
                   <div className="mb-4 p-3 bg-primary/10 rounded-full inline-block group-hover:bg-primary/20 transition-colors">
                     {feature.icon}

@@ -1,4 +1,3 @@
-
 import { Link } from "react-router-dom";
 import { Github, Twitter, Linkedin } from "lucide-react";
 
@@ -32,72 +31,67 @@ const Footer = () => {
           <div>
             <h3 className="font-semibold text-lg mb-4">Product</h3>
             <ul className="space-y-2">
-              <li>
-                <Link to="/features" className="text-muted-foreground hover:text-foreground transition-colors relative group">
-                  Features
-                  <span className="absolute left-0 -bottom-0.5 w-0 h-0.5 bg-primary transition-all group-hover:w-full"></span>
-                </Link>
-              </li>
-              <li>
-                <Link to="/pricing" className="text-muted-foreground hover:text-foreground transition-colors relative group">
-                  Pricing
-                  <span className="absolute left-0 -bottom-0.5 w-0 h-0.5 bg-primary transition-all group-hover:w-full"></span>
-                </Link>
-              </li>
-              <li>
-                <Link to="/testimonials" className="text-muted-foreground hover:text-foreground transition-colors relative group">
-                  Testimonials
-                  <span className="absolute left-0 -bottom-0.5 w-0 h-0.5 bg-primary transition-all group-hover:w-full"></span>
-                </Link>
-              </li>
+              {[
+                { href: "#features", label: "Features" },
+                { href: "#pricing", label: "Pricing" },
+                { href: "#testimonials", label: "Testimonials" },
+              ].map((link) => (
+                <li key={link.label}>
+                  <a 
+                    href={link.href}
+                    className="text-muted-foreground hover:text-foreground transition-colors relative group"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      document.querySelector(link.href)?.scrollIntoView({ behavior: 'smooth' });
+                    }}
+                  >
+                    {link.label}
+                    <span className="absolute left-0 -bottom-0.5 w-0 h-0.5 bg-primary transition-all group-hover:w-full" />
+                  </a>
+                </li>
+              ))}
             </ul>
           </div>
           
           <div>
             <h3 className="font-semibold text-lg mb-4">Resources</h3>
             <ul className="space-y-2">
-              <li>
-                <Link to="/blog" className="text-muted-foreground hover:text-foreground transition-colors relative group">
-                  Blog
-                  <span className="absolute left-0 -bottom-0.5 w-0 h-0.5 bg-primary transition-all group-hover:w-full"></span>
-                </Link>
-              </li>
-              <li>
-                <Link to="/guides" className="text-muted-foreground hover:text-foreground transition-colors relative group">
-                  Guides
-                  <span className="absolute left-0 -bottom-0.5 w-0 h-0.5 bg-primary transition-all group-hover:w-full"></span>
-                </Link>
-              </li>
-              <li>
-                <Link to="/support" className="text-muted-foreground hover:text-foreground transition-colors relative group">
-                  Support
-                  <span className="absolute left-0 -bottom-0.5 w-0 h-0.5 bg-primary transition-all group-hover:w-full"></span>
-                </Link>
-              </li>
+              {[
+                { href: "/blog", label: "Blog" },
+                { href: "/guides", label: "Guides" },
+                { href: "/support", label: "Support" },
+              ].map((link) => (
+                <li key={link.label}>
+                  <Link 
+                    to={link.href}
+                    className="text-muted-foreground hover:text-foreground transition-colors relative group"
+                  >
+                    {link.label}
+                    <span className="absolute left-0 -bottom-0.5 w-0 h-0.5 bg-primary transition-all group-hover:w-full" />
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
           
           <div>
             <h3 className="font-semibold text-lg mb-4">Company</h3>
             <ul className="space-y-2">
-              <li>
-                <Link to="/about" className="text-muted-foreground hover:text-foreground transition-colors relative group">
-                  About Us
-                  <span className="absolute left-0 -bottom-0.5 w-0 h-0.5 bg-primary transition-all group-hover:w-full"></span>
-                </Link>
-              </li>
-              <li>
-                <Link to="/privacy" className="text-muted-foreground hover:text-foreground transition-colors relative group">
-                  Privacy Policy
-                  <span className="absolute left-0 -bottom-0.5 w-0 h-0.5 bg-primary transition-all group-hover:w-full"></span>
-                </Link>
-              </li>
-              <li>
-                <Link to="/terms" className="text-muted-foreground hover:text-foreground transition-colors relative group">
-                  Terms of Service
-                  <span className="absolute left-0 -bottom-0.5 w-0 h-0.5 bg-primary transition-all group-hover:w-full"></span>
-                </Link>
-              </li>
+              {[
+                { href: "/about", label: "About Us" },
+                { href: "/privacy", label: "Privacy Policy" },
+                { href: "/terms", label: "Terms of Service" },
+              ].map((link) => (
+                <li key={link.label}>
+                  <Link 
+                    to={link.href}
+                    className="text-muted-foreground hover:text-foreground transition-colors relative group"
+                  >
+                    {link.label}
+                    <span className="absolute left-0 -bottom-0.5 w-0 h-0.5 bg-primary transition-all group-hover:w-full" />
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
         </div>

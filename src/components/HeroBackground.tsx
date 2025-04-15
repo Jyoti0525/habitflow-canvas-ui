@@ -1,6 +1,6 @@
 
 import { Canvas } from '@react-three/fiber';
-import { Stars, Cloud } from '@react-three/drei';
+import { Stars } from '@react-three/drei';
 import { Suspense } from 'react';
 
 const HeroBackground = () => {
@@ -8,13 +8,13 @@ const HeroBackground = () => {
     <div className="absolute inset-0 -z-10">
       <Canvas camera={{ position: [0, 0, 5] }}>
         <Suspense fallback={null}>
-          <Stars radius={50} depth={50} count={1000} factor={4} fade speed={1} />
-          <Cloud
-            opacity={0.5}
-            speed={0.4}
-            width={10}
-            depth={1.5}
-            segments={20}
+          <Stars
+            radius={100}
+            depth={50}
+            count={2000}
+            factor={4}
+            fade
+            speed={0.5}
           />
           <ambientLight intensity={0.5} />
         </Suspense>
