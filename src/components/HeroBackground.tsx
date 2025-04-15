@@ -21,7 +21,7 @@ const HeroBackground = () => {
               opacity={0.5}
               speed={0.4}
               segments={20}
-              depth={1.5}
+              scale={1.5}  // Replace depth with scale
             />
           </Float>
           <Float speed={2} rotationIntensity={2} floatIntensity={1}>
@@ -29,7 +29,7 @@ const HeroBackground = () => {
               opacity={0.3}
               speed={0.3}
               segments={15}
-              depth={2}
+              scale={1.2}  // Replace depth with scale
               position={[-4, 2, 0]}
             />
           </Float>
