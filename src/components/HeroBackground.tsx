@@ -20,18 +20,16 @@ const HeroBackground = () => {
             <Cloud
               opacity={0.5}
               speed={0.4}
-              width={10}
-              depth={1.5}
               segments={20}
+              depth={1.5}
             />
           </Float>
           <Float speed={2} rotationIntensity={2} floatIntensity={1}>
             <Cloud
               opacity={0.3}
               speed={0.3}
-              width={8}
-              depth={2}
               segments={15}
+              depth={2}
               position={[-4, 2, 0]}
             />
           </Float>
