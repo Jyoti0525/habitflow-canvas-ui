@@ -142,7 +142,7 @@ const Analytics = () => {
   const chartData = generateTimeRangeData(timeRange);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background dark:bg-[#0e1525]">
       <Sidebar />
       <div className="flex-1 ml-[80px] lg:ml-64">
         <Header />
@@ -277,145 +277,202 @@ const Analytics = () => {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-            <Card>
-              <CardHeader>
+            <Card className="bg-card dark:bg-[#1a2332] border-border dark:border-gray-800">
+              <CardHeader className="pb-2">
                 <CardTitle>Weekly Progress</CardTitle>
                 <CardDescription>Completed vs. total habits per day</CardDescription>
               </CardHeader>
-              <CardContent>
-                <ChartContainer config={chartConfig} className="h-[300px]">
-                  <BarChart data={chartData} barGap={0} barCategoryGap="30%">
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                    <XAxis 
-                      dataKey="day"
-                      axisLine={false}
-                      tickLine={false}
-                      dy={10}
-                    />
-                    <YAxis 
-                      axisLine={false}
-                      tickLine={false}
-                      dx={-10}
-                    />
-                    <ChartTooltip
-                      content={<ChartTooltipContent />}
-                    />
-                    <Bar dataKey="total" fill="#E0E0E0" radius={[4, 4, 0, 0]} />
-                    <Bar dataKey="completed" fill="#4285F4" radius={[4, 4, 0, 0]} />
-                    <ChartLegend content={<ChartLegendContent />} />
-                  </BarChart>
-                </ChartContainer>
+              <CardContent className="p-0">
+                <div className="w-full h-[350px] px-4 pb-4">
+                  <ChartContainer config={chartConfig}>
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart 
+                        data={chartData} 
+                        barGap={0} 
+                        barCategoryGap="30%"
+                        margin={{ top: 20, right: 10, left: 10, bottom: 20 }}
+                      >
+                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.1)" />
+                        <XAxis 
+                          dataKey="day"
+                          axisLine={false}
+                          tickLine={false}
+                          dy={10}
+                          tick={{ fontSize: 12, fill: '#8E9196' }}
+                        />
+                        <YAxis 
+                          axisLine={false}
+                          tickLine={false}
+                          dx={-10}
+                          tick={{ fontSize: 12, fill: '#8E9196' }}
+                        />
+                        <ChartTooltip 
+                          content={<ChartTooltipContent />}
+                          cursor={{ fill: 'rgba(255,255,255,0.05)' }}
+                        />
+                        <Bar 
+                          dataKey="total" 
+                          fill="#E0E0E0" 
+                          radius={[4, 4, 0, 0]} 
+                          maxBarSize={45}
+                        />
+                        <Bar 
+                          dataKey="completed" 
+                          fill="#4285F4" 
+                          radius={[4, 4, 0, 0]} 
+                          maxBarSize={45}
+                        />
+                        <Legend 
+                          content={<ChartLegendContent />}
+                          verticalAlign="bottom"
+                          height={36}
+                        />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </ChartContainer>
+                </div>
               </CardContent>
             </Card>
             
-            <Card>
-              <CardHeader>
+            <Card className="bg-card dark:bg-[#1a2332] border-border dark:border-gray-800">
+              <CardHeader className="pb-2">
                 <CardTitle>Streak Trend</CardTitle>
                 <CardDescription>Your habit streak over time</CardDescription>
               </CardHeader>
-              <CardContent>
-                <ChartContainer config={chartConfig} className="h-[300px]">
-                  <LineChart data={monthlyTrendData}>
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                    <XAxis 
-                      dataKey="date"
-                      axisLine={false}
-                      tickLine={false}
-                      dy={10}
-                    />
-                    <YAxis 
-                      axisLine={false}
-                      tickLine={false}
-                      dx={-10}
-                    />
-                    <ChartTooltip
-                      content={<ChartTooltipContent />}
-                    />
-                    <Line 
-                      type="monotone"
-                      dataKey="streak"
-                      stroke="#9b87f5"
-                      strokeWidth={3}
-                      dot={{ r: 4 }}
-                      activeDot={{ r: 6 }}
-                    />
-                    <ChartLegend content={<ChartLegendContent />} />
-                  </LineChart>
-                </ChartContainer>
+              <CardContent className="p-0">
+                <div className="w-full h-[350px] px-4 pb-4">
+                  <ChartContainer config={chartConfig}>
+                    <ResponsiveContainer width="100%" height="100%">
+                      <LineChart 
+                        data={monthlyTrendData}
+                        margin={{ top: 20, right: 10, left: 10, bottom: 20 }}
+                      >
+                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.1)" />
+                        <XAxis 
+                          dataKey="date"
+                          axisLine={false}
+                          tickLine={false}
+                          dy={10}
+                          tick={{ fontSize: 12, fill: '#8E9196' }}
+                        />
+                        <YAxis 
+                          axisLine={false}
+                          tickLine={false}
+                          dx={-10}
+                          tick={{ fontSize: 12, fill: '#8E9196' }}
+                        />
+                        <ChartTooltip 
+                          content={<ChartTooltipContent />}
+                        />
+                        <Line 
+                          type="monotone"
+                          dataKey="streak"
+                          stroke="#9b87f5"
+                          strokeWidth={3}
+                          dot={{ fill: "#9b87f5", r: 4, strokeWidth: 0 }}
+                          activeDot={{ r: 6, fill: "#9b87f5" }}
+                        />
+                        <Legend 
+                          content={<ChartLegendContent />}
+                          verticalAlign="bottom"
+                          height={36}
+                        />
+                      </LineChart>
+                    </ResponsiveContainer>
+                  </ChartContainer>
+                </div>
               </CardContent>
             </Card>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <Card>
-              <CardHeader>
+            <Card className="bg-card dark:bg-[#1a2332] border-border dark:border-gray-800">
+              <CardHeader className="pb-2">
                 <CardTitle>Habit Categories</CardTitle>
                 <CardDescription>Distribution of your habits by category</CardDescription>
               </CardHeader>
-              <CardContent className="flex justify-center">
-                <div className="h-[300px] w-full max-w-[300px]">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <PieChart>
-                      <Pie
-                        data={categoryData}
-                        cx="50%"
-                        cy="50%"
-                        innerRadius={60}
-                        outerRadius={90}
-                        paddingAngle={2}
-                        dataKey="value"
-                        label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
-                        labelLine={false}
-                      >
-                        {categoryData.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={entry.color} />
-                        ))}
-                      </Pie>
-                      <Tooltip formatter={(value) => `${value}%`} />
-                      <Legend
-                        layout="horizontal"
-                        verticalAlign="bottom"
-                        align="center"
-                        iconType="circle"
-                      />
-                    </PieChart>
-                  </ResponsiveContainer>
+              <CardContent className="p-0">
+                <div className="w-full h-[350px] px-4 pb-4 flex justify-center">
+                  <ChartContainer config={chartConfig}>
+                    <ResponsiveContainer width="100%" height="100%">
+                      <PieChart margin={{ top: 20, right: 0, left: 0, bottom: 20 }}>
+                        <Pie
+                          data={categoryData}
+                          cx="50%"
+                          cy="50%"
+                          innerRadius={60}
+                          outerRadius={90}
+                          paddingAngle={2}
+                          dataKey="value"
+                          label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                          labelLine={false}
+                        >
+                          {categoryData.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={entry.color} />
+                          ))}
+                        </Pie>
+                        <ChartTooltip 
+                          content={<ChartTooltipContent />}
+                        />
+                        <Legend 
+                          content={<ChartLegendContent />}
+                          verticalAlign="bottom"
+                          height={36}
+                        />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </ChartContainer>
                 </div>
               </CardContent>
             </Card>
             
-            <Card>
-              <CardHeader>
+            <Card className="bg-card dark:bg-[#1a2332] border-border dark:border-gray-800">
+              <CardHeader className="pb-2">
                 <CardTitle>Habit Consistency</CardTitle>
                 <CardDescription>Consistency rate by habit</CardDescription>
               </CardHeader>
-              <CardContent>
-                <div className="h-[300px]">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <BarChart
-                      data={habitConsistencyData}
-                      layout="vertical"
-                      barSize={20}
-                      margin={{ left: 120 }}
-                    >
-                      <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} />
-                      <XAxis type="number" domain={[0, 100]} tickFormatter={(value) => `${value}%`} />
-                      <YAxis
-                        dataKey="name"
-                        type="category"
-                        scale="band"
-                        axisLine={false}
-                        tickLine={false}
-                      />
-                      <Tooltip formatter={(value) => `${value}%`} />
-                      <Bar
-                        dataKey="consistency"
-                        fill="#4285F4"
-                        radius={[0, 4, 4, 0]}
-                        label={{ position: 'right', formatter: (value) => `${value}%` }}
-                      />
-                    </BarChart>
-                  </ResponsiveContainer>
+              <CardContent className="p-0">
+                <div className="w-full h-[350px] px-4 pb-4">
+                  <ChartContainer config={chartConfig}>
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart
+                        data={habitConsistencyData}
+                        layout="vertical"
+                        margin={{ top: 20, right: 40, left: 40, bottom: 20 }}
+                      >
+                        <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} stroke="rgba(255,255,255,0.1)" />
+                        <XAxis 
+                          type="number" 
+                          domain={[0, 100]} 
+                          tickFormatter={(value) => `${value}%`}
+                          tick={{ fontSize: 12, fill: '#8E9196' }}
+                        />
+                        <YAxis
+                          dataKey="name"
+                          type="category"
+                          scale="band"
+                          axisLine={false}
+                          tickLine={false}
+                          width={100}
+                          tick={{ fontSize: 12, fill: '#8E9196' }}
+                        />
+                        <ChartTooltip 
+                          content={<ChartTooltipContent />}
+                        />
+                        <Bar
+                          dataKey="consistency"
+                          fill="#4285F4"
+                          radius={[0, 4, 4, 0]}
+                          label={{ 
+                            position: 'right', 
+                            formatter: (value: number) => `${value}%`,
+                            fill: '#8E9196',
+                            fontSize: 12
+                          }}
+                        />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </ChartContainer>
                 </div>
               </CardContent>
             </Card>
