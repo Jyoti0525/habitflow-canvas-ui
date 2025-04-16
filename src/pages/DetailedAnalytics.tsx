@@ -139,58 +139,48 @@ const DetailedAnalytics = () => {
               </CardHeader>
               <CardContent className="p-0">
                 <div className="w-full h-[350px] px-4 pb-4">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={chartData} margin={{ left: 0, right: 0, top: 20, bottom: 0 }}>
-                      <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.1)" />
-                      <XAxis 
-                        dataKey="date" 
-                        axisLine={false}
-                        tickLine={false}
-                        tick={{ fontSize: 12, fill: '#8E9196' }}
-                        dy={10}
-                      />
-                      <YAxis 
-                        axisLine={false}
-                        tickLine={false}
-                        tick={{ fontSize: 12, fill: '#8E9196' }}
-                        domain={[0, 12]}
-                        ticks={[0, 3, 6, 9, 12]}
-                      />
-                      <ChartTooltip 
-                        content={<ChartTooltipContent />} 
-                        cursor={{ fill: 'rgba(255,255,255,0.05)' }} 
-                      />
-                      <Bar 
-                        dataKey="total" 
-                        fill="#E0E0E0" 
-                        radius={[4, 4, 0, 0]} 
-                        name="Total" 
-                        maxBarSize={45}
-                      />
-                      <Bar 
-                        dataKey="completed" 
-                        fill="#4285F4" 
-                        radius={[4, 4, 0, 0]} 
-                        name="Completed"
-                        maxBarSize={45} 
-                      />
-                      <Legend 
-                        content={({ payload }) => (
-                          <div className="flex items-center justify-center gap-6 mt-4">
-                            {payload?.map((entry, index) => (
-                              <div key={`item-${index}`} className="flex items-center gap-2">
-                                <div 
-                                  className="h-3 w-3 rounded-sm"
-                                  style={{ backgroundColor: entry.color }}
-                                />
-                                <span className="text-xs text-muted-foreground">{entry.value}</span>
-                              </div>
-                            ))}
-                          </div>
-                        )}
-                      />
-                    </BarChart>
-                  </ResponsiveContainer>
+                  <ChartContainer config={chartConfig}>
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart data={chartData} margin={{ left: 0, right: 0, top: 20, bottom: 0 }}>
+                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.1)" />
+                        <XAxis 
+                          dataKey="date" 
+                          axisLine={false}
+                          tickLine={false}
+                          tick={{ fontSize: 12, fill: '#8E9196' }}
+                          dy={10}
+                        />
+                        <YAxis 
+                          axisLine={false}
+                          tickLine={false}
+                          tick={{ fontSize: 12, fill: '#8E9196' }}
+                          domain={[0, 12]}
+                          ticks={[0, 3, 6, 9, 12]}
+                        />
+                        <ChartTooltip 
+                          content={<ChartTooltipContent />} 
+                          cursor={{ fill: 'rgba(255,255,255,0.05)' }} 
+                        />
+                        <Bar 
+                          dataKey="total" 
+                          fill="#E0E0E0" 
+                          radius={[4, 4, 0, 0]} 
+                          name="Total" 
+                          maxBarSize={45}
+                        />
+                        <Bar 
+                          dataKey="completed" 
+                          fill="#4285F4" 
+                          radius={[4, 4, 0, 0]} 
+                          name="Completed"
+                          maxBarSize={45} 
+                        />
+                        <Legend 
+                          content={<ChartLegendContent />}
+                        />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </ChartContainer>
                 </div>
               </CardContent>
             </Card>
@@ -201,53 +191,41 @@ const DetailedAnalytics = () => {
               </CardHeader>
               <CardContent className="p-0">
                 <div className="w-full h-[350px] px-4 pb-4">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <LineChart data={chartData} margin={{ left: 0, right: 0, top: 20, bottom: 0 }}>
-                      <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.1)" />
-                      <XAxis 
-                        dataKey="date"
-                        axisLine={false}
-                        tickLine={false}
-                        tick={{ fontSize: 12, fill: '#8E9196' }}
-                        dy={10}
-                      />
-                      <YAxis 
-                        axisLine={false}
-                        tickLine={false}
-                        tick={{ fontSize: 12, fill: '#8E9196' }}
-                        domain={[0, 12]}
-                        ticks={[0, 3, 6, 9, 12]}
-                      />
-                      <Tooltip 
-                        contentStyle={{ 
-                          backgroundColor: "#1a2332",
-                          border: "1px solid rgba(255,255,255,0.1)",
-                          borderRadius: "6px",
-                          color: "white" 
-                        }}
-                        labelStyle={{ color: "white" }}
-                        itemStyle={{ color: "#9b87f5" }}
-                      />
-                      <Line 
-                        type="monotone" 
-                        dataKey="streak" 
-                        stroke="#9b87f5" 
-                        strokeWidth={2}
-                        dot={{ fill: "#9b87f5", r: 4, strokeWidth: 0 }}
-                        activeDot={{ r: 6, fill: "#9b87f5" }}
-                      />
-                      <Legend 
-                        content={(props) => (
-                          <div className="flex items-center justify-center mt-4">
-                            <div className="flex items-center gap-2">
-                              <div className="h-3 w-3 rounded-sm bg-[#9b87f5]" />
-                              <span className="text-xs text-muted-foreground">Streak</span>
-                            </div>
-                          </div>
-                        )}
-                      />
-                    </LineChart>
-                  </ResponsiveContainer>
+                  <ChartContainer config={chartConfig}>
+                    <ResponsiveContainer width="100%" height="100%">
+                      <LineChart data={chartData} margin={{ left: 0, right: 0, top: 20, bottom: 0 }}>
+                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.1)" />
+                        <XAxis 
+                          dataKey="date"
+                          axisLine={false}
+                          tickLine={false}
+                          tick={{ fontSize: 12, fill: '#8E9196' }}
+                          dy={10}
+                        />
+                        <YAxis 
+                          axisLine={false}
+                          tickLine={false}
+                          tick={{ fontSize: 12, fill: '#8E9196' }}
+                          domain={[0, 12]}
+                          ticks={[0, 3, 6, 9, 12]}
+                        />
+                        <ChartTooltip 
+                          content={<ChartTooltipContent />}
+                        />
+                        <Line 
+                          type="monotone" 
+                          dataKey="streak" 
+                          stroke="#9b87f5" 
+                          strokeWidth={2}
+                          dot={{ fill: "#9b87f5", r: 4, strokeWidth: 0 }}
+                          activeDot={{ r: 6, fill: "#9b87f5" }}
+                        />
+                        <Legend 
+                          content={<ChartLegendContent />}
+                        />
+                      </LineChart>
+                    </ResponsiveContainer>
+                  </ChartContainer>
                 </div>
               </CardContent>
             </Card>
