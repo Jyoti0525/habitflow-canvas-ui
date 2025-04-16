@@ -1,3 +1,4 @@
+
 import Header from "@/components/Header";
 import Sidebar from "@/components/Sidebar";
 import { Button } from "@/components/ui/button";
@@ -9,7 +10,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
-import { Calendar as CalendarIcon, Filter } from "lucide-react";
+import { Calendar as CalendarIcon, ChevronLeft, Filter } from "lucide-react";
 import { DateRange } from "react-day-picker";
 import { useState } from "react";
 import { format } from "date-fns";
@@ -31,6 +32,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
+import { Link } from "react-router-dom";
 
 const generateMockData = (startDate: Date, endDate: Date) => {
   const data = [];
@@ -73,20 +75,25 @@ const DetailedAnalytics = () => {
   const chartData = date ? generateMockData(date.from!, date.to!) : [];
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background dark:bg-[#0e1525]">
       <Sidebar />
       <div className="flex-1 ml-[80px] lg:ml-64">
         <Header />
         <main className="container mx-auto px-4 py-8">
-          <div className="flex items-center justify-between mb-6">
-            <h1 className="text-3xl font-bold">Detailed Analytics</h1>
-            <div className="flex items-center gap-2">
+          <div className="flex items-center justify-between mb-8">
+            <div className="flex items-center gap-3">
+              <Link to="/analytics" className="text-muted-foreground hover:text-foreground">
+                <ChevronLeft className="h-5 w-5" />
+              </Link>
+              <h1 className="text-3xl font-bold">Detailed Analytics</h1>
+            </div>
+            <div className="flex items-center gap-3">
               <Popover>
                 <PopoverTrigger asChild>
                   <Button
                     variant="outline"
                     className={cn(
-                      "justify-start text-left font-normal w-[300px]",
+                      "justify-start text-left font-normal",
                       !date && "text-muted-foreground"
                     )}
                   >
@@ -94,11 +101,11 @@ const DetailedAnalytics = () => {
                     {date?.from ? (
                       date.to ? (
                         <>
-                          {format(date.from, "LLL dd, y")} -{" "}
-                          {format(date.to, "LLL dd, y")}
+                          {format(date.from, "MMM dd, yyyy")} -{" "}
+                          {format(date.to, "MMM dd, yyyy")}
                         </>
                       ) : (
-                        format(date.from, "LLL dd, y")
+                        format(date.from, "MMM dd, yyyy")
                       )
                     ) : (
                       <span>Pick a date range</span>
@@ -113,6 +120,7 @@ const DetailedAnalytics = () => {
                     selected={date}
                     onSelect={setDate}
                     numberOfMonths={2}
+                    className="pointer-events-auto"
                   />
                 </PopoverContent>
               </Popover>
@@ -124,42 +132,89 @@ const DetailedAnalytics = () => {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <Card>
-              <CardHeader>
+            <Card className="bg-card dark:bg-[#1a2332] border-border dark:border-gray-800">
+              <CardHeader className="pb-2">
                 <CardTitle>Habit Completion Rate</CardTitle>
               </CardHeader>
               <CardContent>
                 <ChartContainer config={chartConfig} className="h-[400px]">
-                  <BarChart data={chartData} margin={{ left: 40 }}>
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                    <XAxis dataKey="date" />
-                    <YAxis />
-                    <ChartTooltip content={<ChartTooltipContent />} />
-                    <Bar dataKey="total" fill="#E0E0E0" radius={[4, 4, 0, 0]} />
-                    <Bar dataKey="completed" fill="#4285F4" radius={[4, 4, 0, 0]} />
-                    <ChartLegend content={<ChartLegendContent />} />
+                  <BarChart data={chartData} margin={{ left: 20, right: 20, top: 20, bottom: 20 }}>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.1)" />
+                    <XAxis 
+                      dataKey="date" 
+                      axisLine={false}
+                      tickLine={false}
+                      tick={{ fontSize: 12, fill: '#8E9196' }}
+                    />
+                    <YAxis 
+                      axisLine={false}
+                      tickLine={false}
+                      tick={{ fontSize: 12, fill: '#8E9196' }}
+                      domain={[0, 12]}
+                      ticks={[0, 3, 6, 9, 12]}
+                    />
+                    <ChartTooltip 
+                      content={<ChartTooltipContent />} 
+                      cursor={{ fill: 'rgba(255,255,255,0.05)' }} 
+                    />
+                    <Bar 
+                      dataKey="total" 
+                      fill="#E0E0E0" 
+                      radius={[4, 4, 0, 0]} 
+                      name="Total" 
+                    />
+                    <Bar 
+                      dataKey="completed" 
+                      fill="#4285F4" 
+                      radius={[4, 4, 0, 0]} 
+                      name="Completed" 
+                    />
+                    <ChartLegend 
+                      content={<ChartLegendContent />}
+                      verticalAlign="bottom"
+                    />
                   </BarChart>
                 </ChartContainer>
               </CardContent>
             </Card>
 
-            <Card>
-              <CardHeader>
+            <Card className="bg-card dark:bg-[#1a2332] border-border dark:border-gray-800">
+              <CardHeader className="pb-2">
                 <CardTitle>Streak Progress</CardTitle>
               </CardHeader>
               <CardContent>
                 <ChartContainer config={chartConfig} className="h-[400px]">
-                  <LineChart data={chartData} margin={{ left: 40 }}>
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                    <XAxis dataKey="date" />
-                    <YAxis />
-                    <Tooltip />
+                  <LineChart data={chartData} margin={{ left: 20, right: 20, top: 20, bottom: 20 }}>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.1)" />
+                    <XAxis 
+                      dataKey="date"
+                      axisLine={false}
+                      tickLine={false}
+                      tick={{ fontSize: 12, fill: '#8E9196' }}
+                    />
+                    <YAxis 
+                      axisLine={false}
+                      tickLine={false}
+                      tick={{ fontSize: 12, fill: '#8E9196' }}
+                      domain={[0, 12]}
+                      ticks={[0, 3, 6, 9, 12]}
+                    />
+                    <Tooltip 
+                      contentStyle={{ 
+                        backgroundColor: "#1a2332",
+                        border: "1px solid rgba(255,255,255,0.1)",
+                        borderRadius: "6px",
+                        color: "white" 
+                      }}
+                      labelStyle={{ color: "white" }}
+                      itemStyle={{ color: "#9b87f5" }}
+                    />
                     <Line 
                       type="monotone" 
                       dataKey="streak" 
                       stroke="#9b87f5" 
                       strokeWidth={2}
-                      dot={{ fill: "#9b87f5", r: 4 }}
+                      dot={{ fill: "#9b87f5", r: 4, strokeWidth: 0 }}
                       activeDot={{ r: 6, fill: "#9b87f5" }}
                     />
                   </LineChart>
