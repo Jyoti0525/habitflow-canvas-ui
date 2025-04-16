@@ -1,4 +1,3 @@
-
 import Header from "@/components/Header";
 import Sidebar from "@/components/Sidebar";
 import { Button } from "@/components/ui/button";
@@ -33,7 +32,6 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-// Mock data generator based on date range
 const generateMockData = (startDate: Date, endDate: Date) => {
   const data = [];
   let currentDate = new Date(startDate);
@@ -49,6 +47,21 @@ const generateMockData = (startDate: Date, endDate: Date) => {
   }
   
   return data;
+};
+
+const chartConfig = {
+  completed: {
+    label: "Completed",
+    color: "#4285F4",
+  },
+  total: {
+    label: "Total",
+    color: "#E0E0E0",
+  },
+  streak: {
+    label: "Streak",
+    color: "#9b87f5",
+  }
 };
 
 const DetailedAnalytics = () => {
@@ -116,7 +129,7 @@ const DetailedAnalytics = () => {
                 <CardTitle>Habit Completion Rate</CardTitle>
               </CardHeader>
               <CardContent>
-                <ChartContainer className="h-[400px]">
+                <ChartContainer config={chartConfig} className="h-[400px]">
                   <BarChart data={chartData} margin={{ left: 40 }}>
                     <CartesianGrid strokeDasharray="3 3" vertical={false} />
                     <XAxis dataKey="date" />
@@ -135,7 +148,7 @@ const DetailedAnalytics = () => {
                 <CardTitle>Streak Progress</CardTitle>
               </CardHeader>
               <CardContent>
-                <ChartContainer className="h-[400px]">
+                <ChartContainer config={chartConfig} className="h-[400px]">
                   <LineChart data={chartData} margin={{ left: 40 }}>
                     <CartesianGrid strokeDasharray="3 3" vertical={false} />
                     <XAxis dataKey="date" />

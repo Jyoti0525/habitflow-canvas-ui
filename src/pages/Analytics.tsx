@@ -1,4 +1,5 @@
-import { useState, useNavigate } from "react";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Header from "@/components/Header";
 import Sidebar from "@/components/Sidebar";
 import { Button } from "@/components/ui/button";
@@ -36,7 +37,6 @@ import {
 } from "lucide-react";
 import { format, subDays, subMonths } from "date-fns";
 
-// Mock data for charts
 const weeklyData = [
   { day: "Mon", completed: 5, total: 7 },
   { day: "Tue", completed: 6, total: 7 },
@@ -72,7 +72,6 @@ const habitConsistencyData = [
   { name: "Journaling", consistency: 60 },
 ];
 
-// Chart configuration
 const chartConfig = {
   completed: {
     label: "Completed",
@@ -148,7 +147,6 @@ const Analytics = () => {
       <div className="flex-1 ml-[80px] lg:ml-64">
         <Header />
         <main className="container mx-auto px-4 py-8">
-          {/* Motivational Banner */}
           <Card className="mb-6 bg-gradient-to-r from-primary/20 to-secondary/20 border-none">
             <CardContent className="flex items-center justify-between p-6">
               <div className="flex items-center">
@@ -168,7 +166,6 @@ const Analytics = () => {
             </CardContent>
           </Card>
 
-          {/* Time Range Filter */}
           <div className="flex items-center justify-between mb-6 flex-wrap gap-4">
             <h1 className="text-3xl font-bold">Habit Analytics</h1>
             <div className="flex items-center gap-2">
@@ -201,7 +198,6 @@ const Analytics = () => {
             </div>
           </div>
 
-          {/* KPI Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
             <Card>
               <CardContent className="p-6 flex flex-col gap-2">
@@ -280,9 +276,7 @@ const Analytics = () => {
             </Card>
           </div>
 
-          {/* Charts */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-            {/* Weekly Progress Chart */}
             <Card>
               <CardHeader>
                 <CardTitle>Weekly Progress</CardTitle>
@@ -314,7 +308,6 @@ const Analytics = () => {
               </CardContent>
             </Card>
             
-            {/* Streak Trend Chart */}
             <Card>
               <CardHeader>
                 <CardTitle>Streak Trend</CardTitle>
@@ -354,7 +347,6 @@ const Analytics = () => {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Category Distribution */}
             <Card>
               <CardHeader>
                 <CardTitle>Habit Categories</CardTitle>
@@ -392,7 +384,6 @@ const Analytics = () => {
               </CardContent>
             </Card>
             
-            {/* Habit Consistency */}
             <Card>
               <CardHeader>
                 <CardTitle>Habit Consistency</CardTitle>
@@ -430,7 +421,6 @@ const Analytics = () => {
             </Card>
           </div>
 
-          {/* Insights Section */}
           <Card className="mt-6">
             <CardHeader>
               <CardTitle className="flex items-center">
