@@ -1,3 +1,4 @@
+
 import Header from "@/components/Header";
 import Sidebar from "@/components/Sidebar";
 import { Button } from "@/components/ui/button";
@@ -30,6 +31,7 @@ import {
   Line,
   Tooltip,
   ResponsiveContainer,
+  Legend,
 } from "recharts";
 import { Link } from "react-router-dom";
 
